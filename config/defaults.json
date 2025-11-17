@@ -1,0 +1,25 @@
+{
+  "tierLabels": [
+    "Full truckload",
+    "Half truckload",
+    "Quarter truckload",
+    "One pallet",
+    "Dropship (less than a pallet)"
+  ],
+  "volumeFeePerCase": [0, 2, 4, 8, 12],
+  "freightPerLb": {
+    "shelf": {
+      "useDefaultRate": true,
+      "ratePerLb": 0.25
+    },
+    "refrigerated": {
+      "useDefaultRate": true,
+      "ratePerLb": 0.35
+    },
+    "frozen": {
+      "useDefaultRate": true,
+      "ratePerLb": 0.45
+    }
+  },
+  "tradeSpendPct": 25
+}
