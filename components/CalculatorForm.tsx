@@ -198,9 +198,61 @@ export default function CalculatorForm() {
     }
   }
 
+  const handleStartOver = () => {
+    if (confirm("Are you sure you want to start over? All data will be cleared.")) {
+      // Clear all localStorage
+      Object.values(STORAGE_KEYS).forEach((key) => {
+        localStorage.removeItem(key)
+      })
+
+      // Reset all state to defaults
+      setCurrentStep(1)
+      setCompanyInfo({
+        companyName: "",
+        contactName: "",
+        contactEmail: "",
+        contactPhone: "",
+        shippingOriginCity: "",
+        shippingOriginState: "",
+        shippingOriginZip: "",
+        plantsWarehouses: [],
+      })
+      setShippingData({
+        tierLabels: [
+          "Full truckload",
+          "Half truckload",
+          "Quarter truckload",
+          "One pallet",
+          "Dropship (less than a pallet)",
+        ],
+        volumeFeePerCase: [0, 2, 4, 8, 12],
+      })
+      setFreightData({
+        freightPerLb: {
+          shelf: { useDefaultRate: true, ratePerLb: 0.25 },
+          refrigerated: { useDefaultRate: true, ratePerLb: 0.35 },
+          frozen: { useDefaultRate: true, ratePerLb: 0.45 },
+        },
+      })
+      setTradeSpendData({
+        tradeSpendPct: 25,
+      })
+      setSkus([])
+      setResults([])
+    }
+  }
+
   return (
     <div className="space-y-6">
-      <ProgressIndicator currentStep={currentStep} totalSteps={STEPS.length} steps={STEPS} />
+      <div className="flex justify-between items-center">
+        <ProgressIndicator currentStep={currentStep} totalSteps={STEPS.length} steps={STEPS} />
+        <button
+          onClick={handleStartOver}
+          className="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 font-medium"
+        >
+          Start Over
+        </button>
+      </div>
 
       {currentStep === 1 && <Step1CompanyInfo data={companyInfo} onChange={setCompanyInfo} />}
       {currentStep === 2 && <Step2ShippingTiers data={shippingData} onChange={setShippingData} />}
