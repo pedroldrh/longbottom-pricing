@@ -11,6 +11,9 @@ Here is a summary of the updates made to the Elohi Pricing Calculator so far:
 - Reordered the calculator flow so the SKU step now appears as page 2 in the top navigation.
 - Renamed the SKU step to "Product Set-Up".
 - Moved the Trade Spend step into page 3 in the calculator flow, shifting the shipping and freight steps later in the sequence.
+- Renamed the Trade Spend page label from "Trade Spend (Accrual)" to "Trade Spend".
+- Added an Effective Date field to the first page so users can enter the date the shared information is considered accurate, using an MM/DD/YYYY format.
+- Removed the Shipping Origin section from the first page.
 - Upgraded the application to a current Next.js version required for Vercel production deployment.
 - Updated the login handling so the password check is more tolerant of formatting issues in the deployed environment variable configuration.
 - Added repo ignore rules to keep local environment files and build artifacts out of source control.

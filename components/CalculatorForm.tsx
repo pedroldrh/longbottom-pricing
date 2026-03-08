@@ -17,7 +17,7 @@ import Step6Results from "./wizard/Step6Results"
 const STEPS = [
   "Company Info",
   "Product Set-Up",
-  "Trade Spend (Accrual)",
+  "Trade Spend",
   "Shipping Tiers & Volume Fee",
   "Freight by Temperature Class",
   "Final Price Output",
@@ -53,13 +53,11 @@ export default function CalculatorForm() {
       }
     }
     return {
+      effectiveDate: "",
       companyName: "",
       contactName: "",
       contactEmail: "",
       contactPhone: "",
-      shippingOriginCity: "",
-      shippingOriginState: "",
-      shippingOriginZip: "",
       plantsWarehouses: [],
     }
   })
@@ -208,13 +206,11 @@ export default function CalculatorForm() {
       // Reset all state to defaults
       setCurrentStep(1)
       setCompanyInfo({
+        effectiveDate: "",
         companyName: "",
         contactName: "",
         contactEmail: "",
         contactPhone: "",
-        shippingOriginCity: "",
-        shippingOriginState: "",
-        shippingOriginZip: "",
         plantsWarehouses: [],
       })
       setShippingData({

@@ -50,7 +50,23 @@ export default function Step1CompanyInfo({ data, onChange }: Step1Props) {
       {/* Company Information */}
       <div className="space-y-4 border-b pb-6">
         <h3 className="text-lg font-medium text-gray-800">Company Information</h3>
-        
+
+        <div>
+          <label htmlFor="effectiveDate" className="block text-sm font-medium text-gray-700">
+            Effective Date
+          </label>
+          <input
+            type="text"
+            id="effectiveDate"
+            value={data.effectiveDate}
+            onChange={(e) => onChange({ ...data, effectiveDate: e.target.value })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+            placeholder="MM/DD/YYYY"
+            inputMode="numeric"
+            pattern="^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$"
+          />
+        </div>
+
         <div>
           <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
             Company Name <span className="text-red-500">*</span>
@@ -106,59 +122,6 @@ export default function Step1CompanyInfo({ data, onChange }: Step1Props) {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
               placeholder="(555) 123-4567"
             />
-          </div>
-        </div>
-      </div>
-
-      {/* Shipping Origin */}
-      <div className="space-y-4 border-b pb-6">
-        <h3 className="text-lg font-medium text-gray-800">Shipping Origin</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
-            <label htmlFor="shippingOriginCity" className="block text-sm font-medium text-gray-700">
-              City
-            </label>
-            <input
-              type="text"
-              id="shippingOriginCity"
-              value={data.shippingOriginCity}
-              onChange={(e) => onChange({ ...data, shippingOriginCity: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-              placeholder="Chicago"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="shippingOriginState" className="block text-sm font-medium text-gray-700">
-                State
-              </label>
-              <input
-                type="text"
-                id="shippingOriginState"
-                value={data.shippingOriginState}
-                onChange={(e) => onChange({ ...data, shippingOriginState: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-                placeholder="IL"
-                maxLength={2}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="shippingOriginZip" className="block text-sm font-medium text-gray-700">
-                ZIP
-              </label>
-              <input
-                type="text"
-                id="shippingOriginZip"
-                value={data.shippingOriginZip}
-                onChange={(e) => onChange({ ...data, shippingOriginZip: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-                placeholder="60601"
-                maxLength={10}
-              />
-            </div>
           </div>
         </div>
       </div>

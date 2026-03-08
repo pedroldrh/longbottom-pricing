@@ -82,12 +82,10 @@ export interface PlantWarehouse {
 }
 
 export interface CompanyInfo {
+  effectiveDate: string
   companyName: string
   contactName: string
   contactEmail: string
   contactPhone: string
-  shippingOriginCity: string
-  shippingOriginState: string
-  shippingOriginZip: string
   plantsWarehouses: PlantWarehouse[]
 }
