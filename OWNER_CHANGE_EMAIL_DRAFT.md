@@ -30,6 +30,7 @@ Here is a summary of the updates made to the Elohi Pricing Calculator so far:
 - Removed the extra "Legal" label from the top of the legal pages.
 - Preserved green completed step indicators when users navigate back to earlier pages after progressing through the workflow.
 - Added a favicon to the website using the existing icon asset.
+- Replaced the favicon with the Elohi icon mark supplied for the website.
 - Renamed "Lbs per Unit" to "Unit Weight" in the Product Set-Up page.
 - Removed the number input spinner arrows and tightened the width of short-form inputs so small values and short fields no longer use oversized boxes.
 - Upgraded the application to a current Next.js version required for Vercel production deployment.
