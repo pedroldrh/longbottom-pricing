@@ -27,6 +27,8 @@ Here is a summary of the updates made to the Elohi Pricing Calculator so far:
 - Added a Transportation input in the Product Set-Up page for each SKU.
 - Made the top step circles clickable so users can jump directly to the page they select.
 - Reworded the Trade Spend page so the top question now asks for the company's total trade spend as a percentage and removed the old input label text.
+- Removed the extra "Legal" label from the top of the legal pages.
+- Preserved green completed step indicators when users navigate back to earlier pages after progressing through the workflow.
 - Renamed "Lbs per Unit" to "Unit Weight" in the Product Set-Up page.
 - Removed the number input spinner arrows and tightened the width of short-form inputs so small values and short fields no longer use oversized boxes.
 - Upgraded the application to a current Next.js version required for Vercel production deployment.

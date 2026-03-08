@@ -2,19 +2,26 @@
 
 interface ProgressIndicatorProps {
   currentStep: number
+  furthestStep: number
   totalSteps: number
   steps: string[]
   onStepClick: (step: number) => void
 }
 
-export default function ProgressIndicator({ currentStep, totalSteps, steps, onStepClick }: ProgressIndicatorProps) {
+export default function ProgressIndicator({
+  currentStep,
+  furthestStep,
+  totalSteps,
+  steps,
+  onStepClick,
+}: ProgressIndicatorProps) {
   return (
     <div className="bg-white rounded-lg shadow p-6 mb-6">
       <div className="flex items-center justify-between">
         {steps.map((step, index) => {
           const stepNumber = index + 1
           const isActive = stepNumber === currentStep
-          const isCompleted = stepNumber < currentStep
+          const isCompleted = stepNumber < furthestStep
 
           return (
             <div key={stepNumber} className="flex items-center flex-1">
@@ -36,7 +43,7 @@ export default function ProgressIndicator({ currentStep, totalSteps, steps, onSt
               </button>
               {stepNumber < totalSteps && (
                 <div
-                  className={`h-1 flex-1 mx-2 ${isCompleted ? "bg-green-600" : "bg-gray-200"}`}
+                  className={`h-1 flex-1 mx-2 ${stepNumber < furthestStep ? "bg-green-600" : "bg-gray-200"}`}
                   style={{ marginBottom: "3rem" }}
                 />
               )}

@@ -29,6 +29,7 @@ const STEPS = [
 
 const STORAGE_KEYS = {
   CURRENT_STEP: "pricing_calculator_current_step",
+  FURTHEST_STEP: "pricing_calculator_furthest_step",
   COMPANY_INFO: "pricing_calculator_company_info",
   SHIPPING_DATA: "pricing_calculator_shipping_data",
   FREIGHT_DATA: "pricing_calculator_freight_data",
@@ -40,6 +41,13 @@ export default function CalculatorForm() {
   const [currentStep, setCurrentStep] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_STEP)
+      return saved ? parseInt(saved, 10) : 1
+    }
+    return 1
+  })
+  const [furthestStep, setFurthestStep] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(STORAGE_KEYS.FURTHEST_STEP)
       return saved ? parseInt(saved, 10) : 1
     }
     return 1
@@ -178,6 +186,16 @@ export default function CalculatorForm() {
   }, [currentStep])
 
   useEffect(() => {
+    setFurthestStep((previous) => {
+      const next = Math.max(previous, currentStep)
+      if (typeof window !== "undefined") {
+        localStorage.setItem(STORAGE_KEYS.FURTHEST_STEP, next.toString())
+      }
+      return next
+    })
+  }, [currentStep])
+
+  useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.COMPANY_INFO, JSON.stringify(companyInfo))
   }, [companyInfo])
 
@@ -278,6 +296,7 @@ export default function CalculatorForm() {
       <div className="flex justify-between items-center">
         <ProgressIndicator
           currentStep={currentStep}
+          furthestStep={furthestStep}
           totalSteps={STEPS.length}
           steps={STEPS}
           onStepClick={setCurrentStep}

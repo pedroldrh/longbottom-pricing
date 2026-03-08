@@ -39,7 +39,6 @@ export default function TermsPage() {
           >
             Back to Calculator
           </Link>
-          <p className="text-sm font-medium uppercase tracking-wide text-gray-500">Legal</p>
           <h1 className="mt-2 text-3xl font-bold text-gray-900">Terms of Use</h1>
           <p className="mt-3 text-sm text-gray-600">
             These terms apply to access to and use of Elohi Pricing Calculator (TM).
