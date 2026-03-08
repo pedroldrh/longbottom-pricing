@@ -15,11 +15,11 @@ import Step5SKUSetup from "./wizard/Step5SKUSetup"
 import Step6Results from "./wizard/Step6Results"
 
 const STEPS = [
-  "Company & Logistics Info",
+  "Company Info",
+  "Product Set-Up",
   "Shipping Tiers & Volume Fee",
   "Freight by Temperature Class",
   "Trade Spend (Accrual)",
-  "SKU Setup",
   "Final Price Output",
 ]
 
@@ -255,12 +255,12 @@ export default function CalculatorForm() {
       </div>
 
       {currentStep === 1 && <Step1CompanyInfo data={companyInfo} onChange={setCompanyInfo} />}
-      {currentStep === 2 && <Step2ShippingTiers data={shippingData} onChange={setShippingData} />}
-      {currentStep === 3 && (
+      {currentStep === 2 && <Step5SKUSetup skus={skus} onChange={setSkus} />}
+      {currentStep === 3 && <Step2ShippingTiers data={shippingData} onChange={setShippingData} />}
+      {currentStep === 4 && (
         <Step3FreightRates data={freightData} tierLabels={shippingData.tierLabels} onChange={setFreightData} />
       )}
-      {currentStep === 4 && <Step4TradeSpend data={tradeSpendData} onChange={setTradeSpendData} />}
-      {currentStep === 5 && <Step5SKUSetup skus={skus} onChange={setSkus} />}
+      {currentStep === 5 && <Step4TradeSpend data={tradeSpendData} onChange={setTradeSpendData} />}
       {currentStep === 6 && (
         <Step6Results skus={skus} results={results} onCalculate={handleCalculate} isCalculating={isCalculating} />
       )}
