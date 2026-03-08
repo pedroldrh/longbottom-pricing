@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Elohi Pricing Calculator (TM)",
   description: "Server-side pricing calculator with Excel parity",
   generator: "v0.app",
+  icons: {
+    icon: "/icon.svg",
+  },
 }
 
 export default function RootLayout({
