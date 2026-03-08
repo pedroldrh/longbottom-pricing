@@ -35,7 +35,7 @@ export default function TermsPage() {
         <div className="border-b border-gray-200 pb-6">
           <Link
             href="/calculator"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-blue-600 px-5 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-700"
           >
             Back to Calculator
           </Link>

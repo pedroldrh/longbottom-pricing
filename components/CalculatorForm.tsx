@@ -155,6 +155,7 @@ export default function CalculatorForm() {
                 productName: sku.productName ?? "",
                 temperatureClass: sku.temperatureClass ?? "shelf",
                 shelfLife: sku.shelfLife ?? "",
+                transportation: sku.transportation ?? "",
                 lbsPerUnit: sku.lbsPerUnit ?? 0,
                 unitsPerCase: sku.unitsPerCase ?? 1,
                 basePricePerCase: sku.basePricePerCase ?? 0,
@@ -275,7 +276,12 @@ export default function CalculatorForm() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <ProgressIndicator currentStep={currentStep} totalSteps={STEPS.length} steps={STEPS} />
+        <ProgressIndicator
+          currentStep={currentStep}
+          totalSteps={STEPS.length}
+          steps={STEPS}
+          onStepClick={setCurrentStep}
+        />
         <button
           onClick={handleStartOver}
           className="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 font-medium"

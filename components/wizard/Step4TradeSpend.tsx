@@ -13,16 +13,10 @@ export default function Step4TradeSpend({ data, onChange }: Step4Props) {
   return (
     <div className="bg-white rounded-lg shadow p-6 space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-gray-900">Trade Spend</h2>
-        <p className="text-sm text-gray-600 mt-1">
-          Configure the percentage of revenue set aside for marketing and sales activities.
-        </p>
+        <h2 className="text-xl font-semibold text-gray-900">What is your company's total trade spend as a percentage?</h2>
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="tradeSpend" className="block text-sm font-medium text-gray-700">
-          Trade spend / marketing accrual (%)
-        </label>
         <input
           type="number"
           id="tradeSpend"
