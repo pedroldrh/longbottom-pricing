@@ -17,9 +17,9 @@ import Step6Results from "./wizard/Step6Results"
 const STEPS = [
   "Company Info",
   "Product Set-Up",
+  "Trade Spend (Accrual)",
   "Shipping Tiers & Volume Fee",
   "Freight by Temperature Class",
-  "Trade Spend (Accrual)",
   "Final Price Output",
 ]
 
@@ -256,11 +256,11 @@ export default function CalculatorForm() {
 
       {currentStep === 1 && <Step1CompanyInfo data={companyInfo} onChange={setCompanyInfo} />}
       {currentStep === 2 && <Step5SKUSetup skus={skus} onChange={setSkus} />}
-      {currentStep === 3 && <Step2ShippingTiers data={shippingData} onChange={setShippingData} />}
-      {currentStep === 4 && (
+      {currentStep === 3 && <Step4TradeSpend data={tradeSpendData} onChange={setTradeSpendData} />}
+      {currentStep === 4 && <Step2ShippingTiers data={shippingData} onChange={setShippingData} />}
+      {currentStep === 5 && (
         <Step3FreightRates data={freightData} tierLabels={shippingData.tierLabels} onChange={setFreightData} />
       )}
-      {currentStep === 5 && <Step4TradeSpend data={tradeSpendData} onChange={setTradeSpendData} />}
       {currentStep === 6 && (
         <Step6Results skus={skus} results={results} onCalculate={handleCalculate} isCalculating={isCalculating} />
       )}

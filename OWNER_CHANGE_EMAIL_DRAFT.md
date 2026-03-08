@@ -10,6 +10,7 @@ Here is a summary of the updates made to the Elohi Pricing Calculator so far:
 - Renamed the first top navigation circle from "Company & Logistics Info" to "Company Info".
 - Reordered the calculator flow so the SKU step now appears as page 2 in the top navigation.
 - Renamed the SKU step to "Product Set-Up".
+- Moved the Trade Spend step into page 3 in the calculator flow, shifting the shipping and freight steps later in the sequence.
 - Upgraded the application to a current Next.js version required for Vercel production deployment.
 - Updated the login handling so the password check is more tolerant of formatting issues in the deployed environment variable configuration.
 - Added repo ignore rules to keep local environment files and build artifacts out of source control.
