@@ -29,6 +29,7 @@ Here is a summary of the updates made to the Elohi Pricing Calculator so far:
 - Reworded the Trade Spend page so the top question now asks for the company's total trade spend as a percentage and removed the old input label text.
 - Removed the extra "Legal" label from the top of the legal pages.
 - Preserved green completed step indicators when users navigate back to earlier pages after progressing through the workflow.
+- Updated the green step indicators so they only show as completed when the required information for that page has actually been entered.
 - Added a favicon to the website using the existing icon asset.
 - Replaced the favicon with the Elohi icon mark supplied for the website.
 - Renamed "Lbs per Unit" to "Unit Weight" in the Product Set-Up page.

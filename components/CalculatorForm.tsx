@@ -29,7 +29,6 @@ const STEPS = [
 
 const STORAGE_KEYS = {
   CURRENT_STEP: "pricing_calculator_current_step",
-  FURTHEST_STEP: "pricing_calculator_furthest_step",
   COMPANY_INFO: "pricing_calculator_company_info",
   SHIPPING_DATA: "pricing_calculator_shipping_data",
   FREIGHT_DATA: "pricing_calculator_freight_data",
@@ -41,13 +40,6 @@ export default function CalculatorForm() {
   const [currentStep, setCurrentStep] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_STEP)
-      return saved ? parseInt(saved, 10) : 1
-    }
-    return 1
-  })
-  const [furthestStep, setFurthestStep] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem(STORAGE_KEYS.FURTHEST_STEP)
       return saved ? parseInt(saved, 10) : 1
     }
     return 1
@@ -186,16 +178,6 @@ export default function CalculatorForm() {
   }, [currentStep])
 
   useEffect(() => {
-    setFurthestStep((previous) => {
-      const next = Math.max(previous, currentStep)
-      if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEYS.FURTHEST_STEP, next.toString())
-      }
-      return next
-    })
-  }, [currentStep])
-
-  useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.COMPANY_INFO, JSON.stringify(companyInfo))
   }, [companyInfo])
 
@@ -291,12 +273,58 @@ export default function CalculatorForm() {
     }
   }
 
+  const isValidDate = (value: string) => /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/.test(value.trim())
+
+  const isCompanyInfoComplete = isValidDate(companyInfo.effectiveDate) && companyInfo.companyName.trim().length > 0
+
+  const isSkuComplete = (sku: SKUInput) =>
+    sku.productName.trim().length > 0 &&
+    sku.shelfLife.trim().length > 0 &&
+    sku.transportation.trim().length > 0 &&
+    sku.lbsPerUnit > 0 &&
+    sku.unitsPerCase > 0 &&
+    sku.basePricePerCase > 0 &&
+    sku.cogsPerLb > 0
+
+  const isProductSetupComplete = skus.length > 0 && skus.every(isSkuComplete)
+  const isTradeSpendComplete = tradeSpendData.tradeSpendPct > 0
+  const isShippingTiersComplete =
+    shippingData.volumeFeePerCase.length === 5 &&
+    shippingData.volumeFeePerCase.every((fee) => Number.isFinite(fee) && fee >= 0)
+  const isPlantsWarehousesComplete =
+    companyInfo.plantsWarehouses.length > 0 &&
+    companyInfo.plantsWarehouses.every(
+      (plant) =>
+        plant.name.trim().length > 0 &&
+        plant.street.trim().length > 0 &&
+        plant.city.trim().length > 0 &&
+        plant.state.trim().length > 0 &&
+        plant.zipCode.trim().length > 0 &&
+        plant.isThirdPartyWarehouse !== ""
+    )
+  const isFreightComplete = Object.values(freightData.freightPerLb).every(
+    (config) => Number.isFinite(config.ratePerLb) && config.ratePerLb >= 0
+  )
+  const isTermsComplete = currentStep > 7
+  const isFinalOutputComplete = results.length > 0
+
+  const completedSteps = [
+    isCompanyInfoComplete,
+    isProductSetupComplete,
+    isTradeSpendComplete,
+    isShippingTiersComplete,
+    isPlantsWarehousesComplete,
+    isFreightComplete,
+    isTermsComplete,
+    isFinalOutputComplete,
+  ]
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <ProgressIndicator
           currentStep={currentStep}
-          furthestStep={furthestStep}
+          completedSteps={completedSteps}
           totalSteps={STEPS.length}
           steps={STEPS}
           onStepClick={setCurrentStep}
