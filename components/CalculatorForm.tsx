@@ -13,6 +13,7 @@ import Step3FreightRates from "./wizard/Step3FreightRates"
 import Step4TradeSpend from "./wizard/Step4TradeSpend"
 import Step5PlantsWarehouses from "./wizard/Step5PlantsWarehouses"
 import Step5SKUSetup from "./wizard/Step5SKUSetup"
+import Step7TermsConditions from "./wizard/Step7TermsConditions"
 import Step6Results from "./wizard/Step6Results"
 
 const STEPS = [
@@ -22,6 +23,7 @@ const STEPS = [
   "Shipping Tiers & Volume Fee",
   "Plants/Warehouses",
   "Freight by Temperature Class",
+  "Terms and Conditions",
   "Final Price Output",
 ]
 
@@ -147,7 +149,18 @@ export default function CalculatorForm() {
       const saved = localStorage.getItem(STORAGE_KEYS.SKUS)
       if (saved) {
         try {
-          return JSON.parse(saved)
+          const parsed = JSON.parse(saved)
+          return Array.isArray(parsed)
+            ? parsed.map((sku: any) => ({
+                productName: sku.productName ?? "",
+                temperatureClass: sku.temperatureClass ?? "shelf",
+                shelfLife: sku.shelfLife ?? "",
+                lbsPerUnit: sku.lbsPerUnit ?? 0,
+                unitsPerCase: sku.unitsPerCase ?? 1,
+                basePricePerCase: sku.basePricePerCase ?? 0,
+                cogsPerLb: sku.cogsPerLb ?? 0,
+              }))
+            : []
         } catch (e) {
           console.error("Failed to parse SKUs from localStorage", e)
         }
@@ -279,7 +292,8 @@ export default function CalculatorForm() {
       {currentStep === 6 && (
         <Step3FreightRates data={freightData} tierLabels={shippingData.tierLabels} onChange={setFreightData} />
       )}
-      {currentStep === 7 && (
+      {currentStep === 7 && <Step7TermsConditions />}
+      {currentStep === 8 && (
         <Step6Results skus={skus} results={results} onCalculate={handleCalculate} isCalculating={isCalculating} />
       )}
 

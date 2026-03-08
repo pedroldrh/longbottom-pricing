@@ -20,6 +20,10 @@ Here is a summary of the updates made to the Elohi Pricing Calculator so far:
 - Added standard trademark and legal treatment for the site, including Elohi Pricing Calculator (TM) naming, a shared footer, and dedicated Terms of Use and Privacy Policy pages.
 - Added confidentiality and authorized-use disclaimer copy to the login screen and printed output.
 - Added direct navigation from the legal pages back into the calculator so users are not stuck after opening Terms of Use or Privacy Policy.
+- Made the return button on the legal pages larger and more visible.
+- Added a new in-flow page called "Terms and Conditions" immediately before the Final Price Output page.
+- Added a Shelf Life input in the Product Set-Up page for each SKU.
+- Added SKU cloning in the Product Set-Up page so users can duplicate an existing SKU and adjust only the fields that change.
 - Renamed "Lbs per Unit" to "Unit Weight" in the Product Set-Up page.
 - Removed the number input spinner arrows and tightened the width of short-form inputs so small values and short fields no longer use oversized boxes.
 - Upgraded the application to a current Next.js version required for Vercel production deployment.

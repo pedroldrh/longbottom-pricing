@@ -15,6 +15,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
       {
         productName: "",
         temperatureClass: "shelf",
+        shelfLife: "",
         lbsPerUnit: 0,
         unitsPerCase: 1,
         basePricePerCase: 0,
@@ -31,6 +32,18 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
 
   const removeSKU = (index: number) => {
     onChange(skus.filter((_, i) => i !== index))
+  }
+
+  const cloneSKU = (index: number) => {
+    const sourceSku = skus[index]
+    const clonedSku: SKUInput = {
+      ...sourceSku,
+      productName: sourceSku.productName ? `${sourceSku.productName} Copy` : "",
+    }
+
+    const updated = [...skus]
+    updated.splice(index + 1, 0, clonedSku)
+    onChange(updated)
   }
 
   return (
@@ -64,13 +77,21 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
           <div key={index} className="bg-white rounded-lg shadow p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">SKU #{index + 1}</h3>
-              <button
-                onClick={() => removeSKU(index)}
-                className="p-2 text-red-600 hover:bg-red-50 rounded-md"
-                title="Remove SKU"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => cloneSKU(index)}
+                  className="px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md"
+                >
+                  Clone SKU
+                </button>
+                <button
+                  onClick={() => removeSKU(index)}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-md"
+                  title="Remove SKU"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             <div>
@@ -97,6 +118,16 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Shelf Life</label>
+                <input
+                  type="text"
+                  value={sku.shelfLife || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, shelfLife: e.target.value })}
+                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">Unit Weight</label>
                 <input

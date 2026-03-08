@@ -33,7 +33,10 @@ export default function PrivacyPage() {
     <div className="bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl rounded-xl bg-white p-8 shadow-sm">
         <div className="border-b border-gray-200 pb-6">
-          <Link href="/calculator" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+          <Link
+            href="/calculator"
+            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+          >
             Back to Calculator
           </Link>
           <p className="text-sm font-medium uppercase tracking-wide text-gray-500">Legal</p>

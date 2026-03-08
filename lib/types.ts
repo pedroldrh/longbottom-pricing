@@ -11,6 +11,7 @@ export interface FreightRateConfig {
 export const SKUInputSchema = z.object({
   productName: z.string().min(1, "Product name is required"),
   temperatureClass: TemperatureClassSchema,
+  shelfLife: z.string().optional().default(""),
   lbsPerUnit: z.number().positive("Must be greater than 0"),
   unitsPerCase: z.number().int().min(1, "Must be at least 1"),
   basePricePerCase: z.number().min(0, "Must be non-negative"),
