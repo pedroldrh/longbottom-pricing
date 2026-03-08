@@ -1,14 +1,15 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import SiteFooter from "@/components/SiteFooter"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Elohi Pricing Calculator",
+  title: "Elohi Pricing Calculator (TM)",
   description: "Server-side pricing calculator with Excel parity",
-    generator: 'v0.app'
+  generator: "v0.app",
 }
 
 export default function RootLayout({
@@ -18,7 +19,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} min-h-screen bg-white text-gray-900`}>
+        <div className="flex min-h-screen flex-col">
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+        </div>
+      </body>
     </html>
   )
 }

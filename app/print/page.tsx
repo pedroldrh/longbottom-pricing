@@ -28,14 +28,13 @@ export default function PrintPage() {
     return <div className="p-8">Loading...</div>
   }
 
-  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "Elohi Pricing Calculator"
+  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "Elohi Pricing Calculator (TM)"
   const brandLogo = process.env.NEXT_PUBLIC_BRAND_LOGO_URL
   const companyInfo = process.env.NEXT_PUBLIC_COMPANY_INFO
   const termsText = process.env.NEXT_PUBLIC_TERMS_TEXT
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Print Button - Hidden when printing */}
       <div className="print:hidden fixed top-4 right-4 z-10">
         <button
           onClick={handlePrint}
@@ -45,9 +44,7 @@ export default function PrintPage() {
         </button>
       </div>
 
-      {/* Print Content */}
       <div className="max-w-7xl mx-auto p-8">
-        {/* Header */}
         <header className="border-b-2 border-gray-300 pb-6 mb-8">
           <div className="flex items-start justify-between">
             <div>
@@ -61,7 +58,6 @@ export default function PrintPage() {
           </div>
         </header>
 
-        {/* Product Info */}
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Product Information</h2>
           <div className="grid grid-cols-2 gap-4 text-sm">
@@ -80,7 +76,6 @@ export default function PrintPage() {
           </div>
         </section>
 
-        {/* Pricing Table */}
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Pricing by Tier</h2>
           <table className="min-w-full border border-gray-300">
@@ -199,10 +194,10 @@ export default function PrintPage() {
           </table>
         </section>
 
-        {/* Footer */}
         <footer className="border-t-2 border-gray-300 pt-6 mt-12 text-xs text-gray-500">
           {termsText && <p className="mb-4 whitespace-pre-line">{termsText}</p>}
-          <p>Page 1 • Generated {new Date().toLocaleString()}</p>
+          <p className="mb-2">Confidential and proprietary. Internal business use only unless otherwise authorized by Elohi.</p>
+          <p>Page 1 - Generated {new Date().toLocaleString()}</p>
         </footer>
       </div>
     </div>
