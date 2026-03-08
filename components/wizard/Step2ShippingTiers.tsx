@@ -42,7 +42,7 @@ export default function Step2ShippingTiers({ data, onChange }: Step2Props) {
                 <span className="text-sm font-medium text-gray-900">{label}</span>
               </div>
             </div>
-            <div className="w-48">
+            <div className="w-36">
               <label className="block text-xs text-gray-600 mb-1">Volume fee per case ($)</label>
               <input
                 type="number"

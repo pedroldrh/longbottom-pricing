@@ -88,7 +88,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
               <select
                 value={sku.temperatureClass}
                 onChange={(e) => updateSKU(index, { ...sku, temperatureClass: e.target.value as any })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
               >
                 <option value="shelf">Shelf</option>
                 <option value="refrigerated">Refrigerated</option>
@@ -98,14 +98,14 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Lbs per Unit</label>
+                <label className="block text-sm font-medium text-gray-700">Unit Weight</label>
                 <input
                   type="number"
                   step="0.01"
                   min="0"
                   value={sku.lbsPerUnit || ""}
                   onChange={(e) => updateSKU(index, { ...sku, lbsPerUnit: Number.parseFloat(e.target.value) || 0 })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                 />
               </div>
 
@@ -117,7 +117,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   min="1"
                   value={sku.unitsPerCase || ""}
                   onChange={(e) => updateSKU(index, { ...sku, unitsPerCase: Number.parseInt(e.target.value) || 1 })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                 />
               </div>
             </div>
@@ -129,7 +129,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   type="text"
                   value={lbsPerCase.toFixed(2)}
                   readOnly
-                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
+                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
                 />
               </div>
 
@@ -139,7 +139,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   type="text"
                   value={sku.basePricePerCase.toFixed(2)}
                   readOnly
-                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
+                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
                 />
               </div>
 
@@ -149,7 +149,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   type="text"
                   value={pricePerLb.toFixed(2)}
                   readOnly
-                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
+                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
                 />
               </div>
             </div>
@@ -165,7 +165,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   onChange={(e) =>
                     updateSKU(index, { ...sku, basePricePerCase: Number.parseFloat(e.target.value) || 0 })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                 />
               </div>
 
@@ -177,7 +177,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   min="0"
                   value={sku.cogsPerLb || ""}
                   onChange={(e) => updateSKU(index, { ...sku, cogsPerLb: Number.parseFloat(e.target.value) || 0 })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                 />
               </div>
             </div>

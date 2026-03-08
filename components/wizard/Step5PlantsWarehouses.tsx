@@ -123,7 +123,7 @@ export default function Step5PlantsWarehouses({ data, onChange }: Step5Props) {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div>
+                    <div className="max-w-[7rem]">
                       <label className="block text-sm font-medium text-gray-700">State</label>
                       <input
                         type="text"
@@ -135,7 +135,7 @@ export default function Step5PlantsWarehouses({ data, onChange }: Step5Props) {
                       />
                     </div>
 
-                    <div>
+                    <div className="max-w-[9rem]">
                       <label className="block text-sm font-medium text-gray-700">Zipcode</label>
                       <input
                         type="text"
