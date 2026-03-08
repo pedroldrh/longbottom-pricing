@@ -6,9 +6,10 @@ import { calculatePricing as calculatePricingEngine } from "@/lib/pricing-engine
 import { CalculationInputSchema, type PricingResult } from "@/lib/types"
 
 export async function login(formData: FormData) {
-  const password = formData.get("password") as string
+  const password = (formData.get("password") as string | null)?.trim() ?? ""
+  const appPassword = process.env.APP_PASSWORD?.trim()
 
-  if (password === process.env.APP_PASSWORD) {
+  if (appPassword && password === appPassword) {
     await setSession()
     redirect("/calculator")
   }
