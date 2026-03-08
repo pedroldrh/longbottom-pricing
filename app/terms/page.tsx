@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 const sections = [
   {
     heading: "Use of the Tool",
@@ -31,6 +33,9 @@ export default function TermsPage() {
     <div className="bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl rounded-xl bg-white p-8 shadow-sm">
         <div className="border-b border-gray-200 pb-6">
+          <Link href="/calculator" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+            Back to Calculator
+          </Link>
           <p className="text-sm font-medium uppercase tracking-wide text-gray-500">Legal</p>
           <h1 className="mt-2 text-3xl font-bold text-gray-900">Terms of Use</h1>
           <p className="mt-3 text-sm text-gray-600">
