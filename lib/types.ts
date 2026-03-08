@@ -77,7 +77,11 @@ export interface PricingResult {
 export interface PlantWarehouse {
   id: string
   name: string
-  location: string
+  street: string
+  city: string
+  state: string
+  zipCode: string
+  isThirdPartyWarehouse: "yes" | "no" | ""
   notes: string
 }
 

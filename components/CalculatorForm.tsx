@@ -11,6 +11,7 @@ import Step1CompanyInfo from "./wizard/Step1CompanyInfo"
 import Step2ShippingTiers from "./wizard/Step2ShippingTiers"
 import Step3FreightRates from "./wizard/Step3FreightRates"
 import Step4TradeSpend from "./wizard/Step4TradeSpend"
+import Step5PlantsWarehouses from "./wizard/Step5PlantsWarehouses"
 import Step5SKUSetup from "./wizard/Step5SKUSetup"
 import Step6Results from "./wizard/Step6Results"
 
@@ -19,6 +20,7 @@ const STEPS = [
   "Product Set-Up",
   "Trade Spend",
   "Shipping Tiers & Volume Fee",
+  "Plants/Warehouses",
   "Freight by Temperature Class",
   "Final Price Output",
 ]
@@ -46,7 +48,26 @@ export default function CalculatorForm() {
       const saved = localStorage.getItem(STORAGE_KEYS.COMPANY_INFO)
       if (saved) {
         try {
-          return JSON.parse(saved)
+          const parsed = JSON.parse(saved)
+          return {
+            effectiveDate: parsed.effectiveDate ?? "",
+            companyName: parsed.companyName ?? "",
+            contactName: parsed.contactName ?? "",
+            contactEmail: parsed.contactEmail ?? "",
+            contactPhone: parsed.contactPhone ?? "",
+            plantsWarehouses: Array.isArray(parsed.plantsWarehouses)
+              ? parsed.plantsWarehouses.map((plant: any, index: number) => ({
+                  id: plant.id ?? `${Date.now()}-${index}`,
+                  name: plant.name ?? "",
+                  street: plant.street ?? "",
+                  city: plant.city ?? "",
+                  state: plant.state ?? "",
+                  zipCode: plant.zipCode ?? "",
+                  isThirdPartyWarehouse: plant.isThirdPartyWarehouse ?? "",
+                  notes: plant.notes ?? "",
+                }))
+              : [],
+          }
         } catch (e) {
           console.error("Failed to parse company info from localStorage", e)
         }
@@ -254,10 +275,11 @@ export default function CalculatorForm() {
       {currentStep === 2 && <Step5SKUSetup skus={skus} onChange={setSkus} />}
       {currentStep === 3 && <Step4TradeSpend data={tradeSpendData} onChange={setTradeSpendData} />}
       {currentStep === 4 && <Step2ShippingTiers data={shippingData} onChange={setShippingData} />}
-      {currentStep === 5 && (
+      {currentStep === 5 && <Step5PlantsWarehouses data={companyInfo} onChange={setCompanyInfo} />}
+      {currentStep === 6 && (
         <Step3FreightRates data={freightData} tierLabels={shippingData.tierLabels} onChange={setFreightData} />
       )}
-      {currentStep === 6 && (
+      {currentStep === 7 && (
         <Step6Results skus={skus} results={results} onCalculate={handleCalculate} isCalculating={isCalculating} />
       )}
 
