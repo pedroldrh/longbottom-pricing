@@ -7,7 +7,7 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Elohi Pricing Calculator (TM)",
+  title: "Elohi Pricing Calculator",
   description: "Server-side pricing calculator with Excel parity",
   generator: "v0.app",
   icons: {

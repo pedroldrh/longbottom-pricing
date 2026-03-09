@@ -4,7 +4,7 @@ const sections = [
   {
     heading: "Use of the Tool",
     body:
-      "Elohi Pricing Calculator (TM) is provided for authorized business use. Access may be restricted, monitored, suspended, or revoked at any time.",
+      "Elohi Pricing Calculator is provided for authorized business use. Access may be restricted, monitored, suspended, or revoked at any time.",
   },
   {
     heading: "Proprietary Information",
@@ -41,7 +41,7 @@ export default function TermsPage() {
           </Link>
           <h1 className="mt-2 text-3xl font-bold text-gray-900">Terms of Use</h1>
           <p className="mt-3 text-sm text-gray-600">
-            These terms apply to access to and use of Elohi Pricing Calculator (TM).
+            These terms apply to access to and use of Elohi Pricing Calculator.
           </p>
         </div>
 

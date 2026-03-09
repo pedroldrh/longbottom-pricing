@@ -28,7 +28,7 @@ export default function PrintPage() {
     return <div className="p-8">Loading...</div>
   }
 
-  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "Elohi Pricing Calculator (TM)"
+  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "Elohi Pricing Calculator"
   const brandLogo = process.env.NEXT_PUBLIC_BRAND_LOGO_URL
   const companyInfo = process.env.NEXT_PUBLIC_COMPANY_INFO
   const termsText = process.env.NEXT_PUBLIC_TERMS_TEXT

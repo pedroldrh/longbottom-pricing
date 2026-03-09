@@ -17,7 +17,7 @@ export default function Step7TermsConditions() {
           any internal approvals required before using pricing externally.
         </p>
         <p>
-          Information entered into Elohi Pricing Calculator (TM) should be treated as confidential and proprietary.
+          Information entered into Elohi Pricing Calculator should be treated as confidential and proprietary.
         </p>
       </div>
     </div>

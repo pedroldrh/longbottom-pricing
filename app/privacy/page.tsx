@@ -41,7 +41,7 @@ export default function PrivacyPage() {
           </Link>
           <h1 className="mt-2 text-3xl font-bold text-gray-900">Privacy Policy</h1>
           <p className="mt-3 text-sm text-gray-600">
-            This page describes the standard privacy treatment expected for Elohi Pricing Calculator (TM).
+            This page describes the standard privacy treatment expected for Elohi Pricing Calculator.
           </p>
         </div>
 

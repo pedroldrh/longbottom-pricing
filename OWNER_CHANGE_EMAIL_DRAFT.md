@@ -17,7 +17,7 @@ Here is a summary of the updates made to the Elohi Pricing Calculator so far:
 - Created a new page 5 called "Plants/Warehouses" and moved the facility section off the first page into that dedicated step.
 - Expanded each facility entry to include separate street, city, state, and zipcode fields instead of a single location field.
 - Added a yes/no question for whether each facility is a 3rd party warehouse, and if "Yes" is selected the form now shows a placeholder note for future 3rd-party warehouse questions.
-- Added standard trademark and legal treatment for the site, including Elohi Pricing Calculator (TM) naming, a shared footer, and dedicated Terms of Use and Privacy Policy pages.
+- Added standard trademark and legal treatment for the site, including Elohi Pricing Calculator naming, a shared footer, and dedicated Terms of Use and Privacy Policy pages.
 - Added confidentiality and authorized-use disclaimer copy to the login screen and printed output.
 - Added direct navigation from the legal pages back into the calculator so users are not stuck after opening Terms of Use or Privacy Policy.
 - Made the return button on the legal pages larger and more visible.
