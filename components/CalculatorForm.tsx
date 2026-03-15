@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { calculatePricing } from "@/app/actions"
-import type { PricingResult, SKUInput, Settings, CompanyInfo, TermsConditions } from "@/lib/types"
+import type { PricingResult, SKUInput, SKUPnLInputs, Settings, CompanyInfo, TermsConditions } from "@/lib/types"
 import SettingsPanel from "./SettingsPanel"
 import ResultsTable from "./ResultsTable"
 import defaults from "@/config/defaults.json"
@@ -14,6 +14,7 @@ import Step4TradeSpend, { type TradeSpendData } from "./wizard/Step4TradeSpend"
 import Step5PlantsWarehouses from "./wizard/Step5PlantsWarehouses"
 import Step5SKUSetup from "./wizard/Step5SKUSetup"
 import Step7TermsConditions from "./wizard/Step7TermsConditions"
+import Step6SKUPnL, { emptyPnlInputs } from "./wizard/Step6SKUPnL"
 import Step6Results from "./wizard/Step6Results"
 
 const STEPS = [
@@ -35,6 +36,7 @@ const STORAGE_KEYS = {
   TRADE_SPEND_DATA: "pricing_calculator_trade_spend_data",
   SKUS: "pricing_calculator_skus",
   TERMS_DATA: "pricing_calculator_terms_data",
+  PNL_INPUTS: "pricing_calculator_pnl_inputs",
 }
 
 export default function CalculatorForm() {
@@ -195,6 +197,21 @@ export default function CalculatorForm() {
     return []
   })
 
+  const [pnlInputs, setPnlInputs] = useState<SKUPnLInputs[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(STORAGE_KEYS.PNL_INPUTS)
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved)
+          return Array.isArray(parsed) ? parsed : []
+        } catch (e) {
+          console.error("Failed to parse P&L inputs from localStorage", e)
+        }
+      }
+    }
+    return []
+  })
+
   const emptyTerms: TermsConditions = {
     remitCompanyName: "",
     remitStreet: "",
@@ -253,6 +270,21 @@ export default function CalculatorForm() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.TERMS_DATA, JSON.stringify(termsData))
   }, [termsData])
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.PNL_INPUTS, JSON.stringify(pnlInputs))
+  }, [pnlInputs])
+
+  // Keep pnlInputs array in sync with skus length
+  useEffect(() => {
+    setPnlInputs((prev) => {
+      if (prev.length === skus.length) return prev
+      if (prev.length < skus.length) {
+        return [...prev, ...Array.from({ length: skus.length - prev.length }, () => emptyPnlInputs())]
+      }
+      return prev.slice(0, skus.length)
+    })
+  }, [skus.length])
 
   const handleCalculate = async () => {
     setIsCalculating(true)
@@ -344,6 +376,7 @@ export default function CalculatorForm() {
         deviatedBillback: 0,
       })
       setSkus([])
+      setPnlInputs([])
       setTermsData(emptyTerms)
       setResults([])
     }
@@ -424,7 +457,13 @@ export default function CalculatorForm() {
       {currentStep === 4 && <Step2ShippingTiers data={shippingData} onChange={setShippingData} />}
       {currentStep === 5 && <Step5PlantsWarehouses data={companyInfo} onChange={setCompanyInfo} />}
       {currentStep === 6 && (
-        <Step3FreightRates data={freightData} tierLabels={shippingData.tierLabels} onChange={setFreightData} />
+        <Step6SKUPnL
+          skus={skus}
+          shippingData={shippingData}
+          tradeSpendData={tradeSpendData}
+          pnlInputs={pnlInputs}
+          onChange={setPnlInputs}
+        />
       )}
       {currentStep === 7 && (
         <Step7TermsConditions

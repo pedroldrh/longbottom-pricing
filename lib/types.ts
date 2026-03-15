@@ -92,6 +92,13 @@ export interface PricingResult {
   tiers: TierResult[]
 }
 
+export interface SKUPnLInputs {
+  cogsPerCase: number
+  freightPerTier: number[]  // 5 values
+  lumpersPerTier: number[]  // 5 values
+  damagesPerTier: number[]  // 5 values
+}
+
 export interface PlantWarehouse {
   id: string
   name: string
