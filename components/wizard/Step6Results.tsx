@@ -40,97 +40,123 @@ export default function Step6Results({
   }
 
   const handleDownloadCSV = () => {
-    const rows: string[][] = []
-    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`
-    const blank = () => rows.push([])
-    const divider = (cols: number) => rows.push(Array(cols).fill("---"))
+    // Helper to escape HTML entities
+    const esc = (v: string | number) => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+    // Column count for product info table
+    const prodCols = 13
+    // Column count for tier-based tables
+    const tierCols = 6
+
+    let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Price Sheet</x:Name><x:WorksheetOptions><x:FitToPage/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+<style>
+  td, th { font-family: Calibri, sans-serif; font-size: 11pt; padding: 4px 8px; vertical-align: middle; border: 1px solid #E0C5AC; }
+  .header { background: #393089; color: #FFFFFF; font-weight: bold; font-size: 14pt; text-align: center; border: none; }
+  .header-sub { background: #393089; color: #FFFFFF; font-weight: bold; font-size: 11pt; text-align: center; border: none; }
+  .header-sm { background: #393089; color: #FFFFFF; font-size: 10pt; text-align: center; border: none; }
+  .section { background: #6FB7F2; color: #FFFFFF; font-weight: bold; font-size: 11pt; }
+  .subsection { background: #d6e8fa; font-weight: bold; font-size: 10pt; color: #393089; }
+  .colheader { background: #E0C5AC; font-weight: bold; color: #1A1A1A; font-size: 10pt; }
+  .colheader-c { background: #E0C5AC; font-weight: bold; color: #1A1A1A; font-size: 10pt; text-align: center; }
+  .alt { background: #FFFAF5; }
+  .money { text-align: right; mso-number-format: "\\$\\#\\,\\#\\#0\\.00"; }
+  .pct { text-align: right; }
+  .pos { color: #00BC70; font-weight: bold; }
+  .neg { color: #E41C50; font-weight: bold; }
+  .bold { font-weight: bold; }
+  .label { font-weight: bold; color: #393089; }
+  .empty { border: none; }
+  .input { background: #FFF8E1; }
+  .divider { border-bottom: 2px solid #393089; }
+  .right { text-align: right; }
+  .center { text-align: center; }
+  .wrap { mso-text-control: shrinktofit; }
+</style>
+</head><body>
+<table>`
 
     // ═══════════════════════════════════════════
-    // SECTION 1: COMPANY HEADER
+    // ROW 1-3: COMPANY HEADER
     // ═══════════════════════════════════════════
-    rows.push(["", "", "", companyInfo.companyName || ""])
-    rows.push(["", "", "", "National Distributor Price Sheet"])
-    rows.push(["", "", "", `EFFECTIVE DATE: ${companyInfo.effectiveDate || "N/A"}`])
+    html += `<tr><td colspan="${prodCols}" class="header" style="font-size:16pt;">${esc(companyInfo.companyName || 'Elohi')}</td></tr>`
+    html += `<tr><td colspan="${prodCols}" class="header-sub">National Distributor Price Sheet</td></tr>`
+    let headerLine3 = `EFFECTIVE DATE: ${esc(companyInfo.effectiveDate || 'N/A')}`
     if (companyInfo.contactName) {
-      rows.push(["", "", "", `Contact: ${companyInfo.contactName}  |  ${companyInfo.contactEmail || ""}  |  ${companyInfo.contactPhone || ""}`])
+      headerLine3 += `&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;${esc(companyInfo.contactName)}`
+      if (companyInfo.contactEmail) headerLine3 += `&nbsp;&nbsp;${esc(companyInfo.contactEmail)}`
+      if (companyInfo.contactPhone) headerLine3 += `&nbsp;&nbsp;${esc(companyInfo.contactPhone)}`
     }
-    blank()
-    blank()
+    html += `<tr><td colspan="${prodCols}" class="header-sm">${headerLine3}</td></tr>`
+
+    // Blank row
+    html += `<tr><td colspan="${prodCols}" class="empty">&nbsp;</td></tr>`
 
     // ═══════════════════════════════════════════
-    // SECTION 2: PRODUCT INFORMATION
+    // PRODUCT INFORMATION
     // ═══════════════════════════════════════════
-    rows.push(["PRODUCT INFORMATION"])
-    blank()
-    rows.push([
-      "Product Name / Description",
-      "Case UPC",
-      "Unit Weight (lbs.)",
-      "Units / Case",
-      "Lbs / Case",
-      "Case Size (L x W x H in.)",
-      "Pallet Size (L x W x H in.)",
-      "Case Cube (Cu. ft.)",
-      "Case Net Weight (lbs.)",
-      "Case Gross Weight (lbs.)",
-      "Cases / Pallet",
-      "Pallet TI",
-      "Pallet HI",
-    ])
-    skus.forEach((sku) => {
+    html += `<tr><td colspan="${prodCols}" class="section">PRODUCT INFORMATION</td></tr>`
+    const prodHeaders = [
+      'Product Name / Description', 'Case UPC', 'Unit Wt. (lbs)', 'Units / Case',
+      'Lbs / Case', 'Case Size (L x W x H)', 'Pallet Size (L x W x H)',
+      'Case Cube (cu ft)', 'Case Net Wt. (lbs)', 'Case Gross Wt. (lbs)',
+      'Cases / Pallet', 'Pallet TI', 'Pallet HI',
+    ]
+    html += '<tr>' + prodHeaders.map((h) => `<td class="colheader-c">${esc(h)}</td>`).join('') + '</tr>'
+    skus.forEach((sku, idx) => {
       const lbsPerCase = sku.lbsPerUnit * sku.unitsPerCase
-      rows.push([
-        sku.productName,
-        sku.caseUPC || "",
-        sku.lbsPerUnit.toFixed(2),
-        String(sku.unitsPerCase),
-        lbsPerCase.toFixed(2),
-        sku.caseSize || "",
-        sku.palletSize || "",
-        String(sku.caseCube || 0),
-        lbsPerCase.toFixed(2),
-        String(sku.caseGrossWeight || 0),
-        String(sku.casesPerPallet || 0),
-        String(sku.palletTI || 0),
-        String(sku.palletHI || 0),
-      ])
+      const altClass = idx % 2 === 1 ? ' class="alt"' : ''
+      const altClassC = idx % 2 === 1 ? ' class="alt center"' : ' class="center"'
+      html += `<tr>`
+      html += `<td${altClass}>${esc(sku.productName)}</td>`
+      html += `<td${altClassC}>${esc(sku.caseUPC || '')}</td>`
+      html += `<td${altClassC}>${sku.lbsPerUnit.toFixed(2)}</td>`
+      html += `<td${altClassC}>${sku.unitsPerCase}</td>`
+      html += `<td${altClassC}>${lbsPerCase.toFixed(2)}</td>`
+      html += `<td${altClassC}>${esc(sku.caseSize || '')}</td>`
+      html += `<td${altClassC}>${esc(sku.palletSize || '')}</td>`
+      html += `<td${altClassC}>${fmt(sku.caseCube)}</td>`
+      html += `<td${altClassC}>${lbsPerCase.toFixed(2)}</td>`
+      html += `<td${altClassC}>${fmt(sku.caseGrossWeight)}</td>`
+      html += `<td${altClassC}>${sku.casesPerPallet}</td>`
+      html += `<td${altClassC}>${sku.palletTI}</td>`
+      html += `<td${altClassC}>${sku.palletHI}</td>`
+      html += `</tr>`
     })
-    blank()
-    blank()
+
+    // Blank row
+    html += `<tr><td colspan="${prodCols}" class="empty">&nbsp;</td></tr>`
 
     // ═══════════════════════════════════════════
-    // SECTION 3: BRACKETED DELIVERED PRICING
+    // BRACKETED DELIVERED PRICING
     // ═══════════════════════════════════════════
-    rows.push(["BRACKETED DELIVERED PRICING"])
-    blank()
-    rows.push([
-      "",
-      "Tier 1",
-      "Tier 2",
-      "Tier 3",
-      "Tier 4",
-      "Tier 5",
-    ])
-    rows.push([
-      "",
-      TIER_DESCRIPTIONS[0],
-      TIER_DESCRIPTIONS[1],
-      TIER_DESCRIPTIONS[2],
-      TIER_DESCRIPTIONS[3],
-      TIER_DESCRIPTIONS[4],
-    ])
-    blank()
-    skus.forEach((sku, i) => {
-      rows.push([
-        sku.productName,
-        ...Array.from({ length: 5 }, (_, t) => `$${getDeliveredPrice(i, t).toFixed(2)}`),
-      ])
+    html += `<tr><td colspan="${tierCols}" class="section">BRACKETED DELIVERED PRICING</td></tr>`
+    // Tier name header
+    html += `<tr><td class="colheader">&nbsp;</td>`
+    for (let i = 0; i < 5; i++) html += `<td class="colheader-c">Tier ${i + 1}</td>`
+    html += `</tr>`
+    // Tier description sub-header
+    html += `<tr><td class="colheader">&nbsp;</td>`
+    for (let i = 0; i < 5; i++) html += `<td class="colheader-c" style="font-size:8pt; font-weight:normal;">${esc(TIER_DESCRIPTIONS[i])}</td>`
+    html += `</tr>`
+    // Product rows
+    skus.forEach((sku, skuIdx) => {
+      const altClass = skuIdx % 2 === 1 ? ' alt' : ''
+      html += `<tr>`
+      html += `<td class="bold${altClass}">${esc(sku.productName)}</td>`
+      for (let t = 0; t < 5; t++) {
+        html += `<td class="money${altClass}">$${getDeliveredPrice(skuIdx, t).toFixed(2)}</td>`
+      }
+      html += `</tr>`
     })
-    blank()
-    blank()
+
+    // Blank row
+    html += `<tr><td colspan="${tierCols}" class="empty">&nbsp;</td></tr>`
 
     // ═══════════════════════════════════════════
-    // SECTION 4: SKU-LEVEL P&L (one per SKU)
+    // PER-SKU P&L SECTIONS
     // ═══════════════════════════════════════════
     skus.forEach((sku, skuIdx) => {
       const pnl = pnlInputs[skuIdx]
@@ -142,116 +168,165 @@ export default function Step6Results({
       const ts = tradeSpendData
       const netTradePct = ts.distributorTradeAccrual + ts.operatorTradeAccrual + ts.distributorMarketingAccrual + ts.operatorMarketingAccrual + ts.deviatedBillback
 
-      rows.push([`SKU P&L:  ${sku.productName}`])
-      blank()
-      rows.push(["", "Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"])
-      rows.push(["", TIER_DESCRIPTIONS[0], TIER_DESCRIPTIONS[1], TIER_DESCRIPTIONS[2], TIER_DESCRIPTIONS[3], TIER_DESCRIPTIONS[4]])
-      divider(6)
+      // SKU Header
+      html += `<tr><td colspan="${tierCols}" class="header-sub" style="text-align:left;">SKU P&amp;L: ${esc(sku.productName)}</td></tr>`
+      // Tier headers
+      html += `<tr><td class="colheader">&nbsp;</td>`
+      for (let i = 0; i < 5; i++) html += `<td class="colheader-c">Tier ${i + 1}</td>`
+      html += `</tr>`
+      html += `<tr><td class="colheader">&nbsp;</td>`
+      for (let i = 0; i < 5; i++) html += `<td class="colheader-c" style="font-size:8pt; font-weight:normal;">${esc(TIER_DESCRIPTIONS[i])}</td>`
+      html += `</tr>`
 
-      // Pricing section
-      rows.push(["PRICING"])
-      rows.push(["  Base Price / Case", ...volFees.map(() => `$${basePrice.toFixed(2)}`)])
-      blank()
-      rows.push(["  Volume Based Fee (%)", ...volFees.map((v) => `${v}%`)])
-      rows.push(["  Volume Based Fee ($)", ...volFees.map((v) => `$${(basePrice * v / 100).toFixed(2)}`)])
-      blank()
-      rows.push(["  Net Sell Price (w/o Delivery)", ...netSells.map((n) => `$${n.toFixed(2)}`)])
-      divider(6)
+      // Helper for data rows
+      const dataRow = (label: string, values: string[], cls?: string) => {
+        html += `<tr><td class="bold">${esc(label)}</td>`
+        values.forEach((v) => {
+          const extraCls = cls ? ` ${cls}` : ''
+          html += `<td class="right${extraCls}">${esc(v)}</td>`
+        })
+        html += `</tr>`
+      }
+      const moneyRow = (label: string, values: number[], cls?: string) => {
+        html += `<tr><td class="bold">${esc(label)}</td>`
+        values.forEach((v) => {
+          const extraCls = cls ? ` ${cls}` : ''
+          html += `<td class="money${extraCls}">$${v.toFixed(2)}</td>`
+        })
+        html += `</tr>`
+      }
+      const pctRow = (label: string, values: number[], bases: number[], cls?: string) => {
+        html += `<tr><td class="bold">${esc(label)}</td>`
+        values.forEach((v, i) => {
+          const pctVal = bases[i] !== 0 ? (v / bases[i] * 100).toFixed(1) : '0.0'
+          const extraCls = cls ? ` ${cls}` : ''
+          html += `<td class="pct${extraCls}">${pctVal}%</td>`
+        })
+        html += `</tr>`
+      }
+      const gpClass = (values: number[]) => values.map((v) => v >= 0 ? 'pos' : 'neg')
+      const moneyRowGP = (label: string, values: number[]) => {
+        html += `<tr><td class="bold">${esc(label)}</td>`
+        values.forEach((v) => {
+          const cls = v >= 0 ? 'pos' : 'neg'
+          html += `<td class="money ${cls}">$${v.toFixed(2)}</td>`
+        })
+        html += `</tr>`
+      }
+      const pctRowGP = (label: string, values: number[], bases: number[]) => {
+        html += `<tr><td class="bold">${esc(label)}</td>`
+        values.forEach((v, i) => {
+          const pctVal = bases[i] !== 0 ? (v / bases[i] * 100).toFixed(1) : '0.0'
+          const cls = v >= 0 ? 'pos' : 'neg'
+          html += `<td class="pct ${cls}">${pctVal}%</td>`
+        })
+        html += `</tr>`
+      }
 
-      // Freight section
-      rows.push(["FREIGHT & DELIVERY"])
-      rows.push(["  Freight Charge", ...pnl.freightPerTier.map((f) => `$${f.toFixed(2)}`)])
-      rows.push(["  Lumpers Fee", ...pnl.lumpersPerTier.map((l) => `$${l.toFixed(2)}`)])
-      rows.push(["  Damages Fee", ...pnl.damagesPerTier.map((d) => `$${d.toFixed(2)}`)])
-      blank()
+      // PRICING sub-section
+      html += `<tr><td colspan="${tierCols}" class="subsection">PRICING</td></tr>`
+      moneyRow('Base Price / Case', volFees.map(() => basePrice), 'input')
+      dataRow('Volume Based Fee (%)', volFees.map((v) => `${v}%`))
+      moneyRow('Volume Based Fee ($)', volFees.map((v) => basePrice * v / 100))
+      moneyRow('Net Sell Price (w/o Delivery)', netSells)
+
+      // FREIGHT sub-section
+      html += `<tr><td colspan="${tierCols}" class="subsection">FREIGHT &amp; DELIVERY</td></tr>`
+      moneyRow('Freight Charge', pnl.freightPerTier.map((f) => f), 'input')
+      moneyRow('Lumpers Fee', pnl.lumpersPerTier.map((l) => l), 'input')
+      moneyRow('Damages Fee', pnl.damagesPerTier.map((d) => d), 'input')
       const delivered = netSells.map((n, t) => n + pnl.freightPerTier[t] + pnl.lumpersPerTier[t] + pnl.damagesPerTier[t])
-      rows.push(["  Delivered Sell Price", ...delivered.map((d) => `$${d.toFixed(2)}`)])
-      divider(6)
+      html += `<tr><td class="bold divider">Delivered Sell Price</td>`
+      delivered.forEach((d) => { html += `<td class="money bold divider">$${d.toFixed(2)}</td>` })
+      html += `</tr>`
 
-      // Cost & Margin section
-      rows.push(["COST & GROSS PROFIT"])
-      rows.push(["  COGS ($/case)", ...volFees.map(() => `$${pnl.cogsPerCase.toFixed(2)}`)])
+      // COST sub-section
+      html += `<tr><td colspan="${tierCols}" class="subsection">COST &amp; GROSS PROFIT</td></tr>`
+      moneyRow('COGS ($/case)', volFees.map(() => pnl.cogsPerCase), 'input')
       const cogsTotal = netSells.map((_, t) => pnl.cogsPerCase + pnl.freightPerTier[t] + pnl.lumpersPerTier[t] + pnl.damagesPerTier[t])
-      rows.push(["  COGS Total (incl. freight)", ...cogsTotal.map((c) => `$${c.toFixed(2)}`)])
-      blank()
+      moneyRow('COGS Total (incl. freight)', cogsTotal)
       const gpBefore = delivered.map((d, t) => d - cogsTotal[t])
-      rows.push(["  Manufacturer GP ($) Before Trade", ...gpBefore.map((g) => `$${g.toFixed(2)}`)])
-      rows.push(["  Manufacturer GP (%) Before Trade", ...gpBefore.map((g, t) => netSells[t] !== 0 ? `${(g / netSells[t] * 100).toFixed(1)}%` : "0.0%")])
-      divider(6)
+      moneyRowGP('Manufacturer GP ($) Before Trade', gpBefore)
+      pctRowGP('Manufacturer GP (%) Before Trade', gpBefore, netSells)
 
-      // Trade spend section
-      rows.push(["TRADE SPEND"])
-      rows.push(["  Distributor Trade Accrual (" + ts.distributorTradeAccrual + "%)", ...netSells.map((n) => `$${(n * ts.distributorTradeAccrual / 100).toFixed(2)}`)])
-      rows.push(["  Operator Trade Accrual (" + ts.operatorTradeAccrual + "%)", ...netSells.map((n) => `$${(n * ts.operatorTradeAccrual / 100).toFixed(2)}`)])
-      rows.push(["  Distributor Marketing Accrual (" + ts.distributorMarketingAccrual + "%)", ...netSells.map((n) => `$${(n * ts.distributorMarketingAccrual / 100).toFixed(2)}`)])
-      rows.push(["  Operator Marketing Accrual (" + ts.operatorMarketingAccrual + "%)", ...netSells.map((n) => `$${(n * ts.operatorMarketingAccrual / 100).toFixed(2)}`)])
-      rows.push(["  Deviated Billback (" + ts.deviatedBillback + "%)", ...netSells.map((n) => `$${(n * ts.deviatedBillback / 100).toFixed(2)}`)])
-      blank()
-      rows.push(["  Net Trade Total (" + netTradePct.toFixed(1) + "%)", ...netSells.map((n) => `$${(n * netTradePct / 100).toFixed(2)}`)])
-      divider(6)
+      // TRADE SPEND sub-section
+      html += `<tr><td colspan="${tierCols}" class="subsection">TRADE SPEND</td></tr>`
+      moneyRow(`Distributor Trade Accrual (${ts.distributorTradeAccrual}%)`, netSells.map((n) => n * ts.distributorTradeAccrual / 100))
+      moneyRow(`Operator Trade Accrual (${ts.operatorTradeAccrual}%)`, netSells.map((n) => n * ts.operatorTradeAccrual / 100))
+      moneyRow(`Distributor Marketing Accrual (${ts.distributorMarketingAccrual}%)`, netSells.map((n) => n * ts.distributorMarketingAccrual / 100))
+      moneyRow(`Operator Marketing Accrual (${ts.operatorMarketingAccrual}%)`, netSells.map((n) => n * ts.operatorMarketingAccrual / 100))
+      moneyRow(`Deviated Billback (${ts.deviatedBillback}%)`, netSells.map((n) => n * ts.deviatedBillback / 100))
+      html += `<tr><td class="bold divider">Net Trade Total (${netTradePct.toFixed(1)}%)</td>`
+      netSells.forEach((n) => { html += `<td class="money bold divider">$${(n * netTradePct / 100).toFixed(2)}</td>` })
+      html += `</tr>`
 
-      // Final GP
-      rows.push(["FINAL MARGIN"])
+      // FINAL MARGIN sub-section
+      html += `<tr><td colspan="${tierCols}" class="subsection">FINAL MARGIN</td></tr>`
       const gpAfter = gpBefore.map((g, t) => g - netSells[t] * netTradePct / 100)
-      rows.push(["  Manufacturer GP ($) After Trade", ...gpAfter.map((g) => `$${g.toFixed(2)}`)])
-      rows.push(["  Manufacturer GP (%) After Trade", ...gpAfter.map((g, t) => netSells[t] !== 0 ? `${(g / netSells[t] * 100).toFixed(1)}%` : "0.0%")])
+      moneyRowGP('Manufacturer GP ($) After Trade', gpAfter)
+      pctRowGP('Manufacturer GP (%) After Trade', gpAfter, netSells)
 
-      blank()
-      blank()
-      blank()
+      // Blank row separator between SKUs
+      html += `<tr><td colspan="${tierCols}" class="empty">&nbsp;</td></tr>`
     })
 
     // ═══════════════════════════════════════════
-    // SECTION 5: TERMS & CONDITIONS
+    // TERMS & CONDITIONS
     // ═══════════════════════════════════════════
-    rows.push(["TERMS & CONDITIONS"])
-    blank()
+    html += `<tr><td colspan="${tierCols}" class="section">TERMS &amp; CONDITIONS</td></tr>`
 
-    // Warehouse
-    rows.push(["WAREHOUSE:"])
+    const termsRow = (label: string, value: string) => {
+      html += `<tr><td class="label" style="width:200px;">${esc(label)}</td><td colspan="${tierCols - 1}">${esc(value)}</td></tr>`
+    }
+
+    // Warehouses
     companyInfo.plantsWarehouses?.forEach((w) => {
-      rows.push(["  Name:", w.name])
-      rows.push(["  Address:", `${w.street}, ${w.city}, ${w.state} ${w.zipCode}`])
-      rows.push(["  Third-Party Warehouse:", w.isThirdPartyWarehouse === "yes" ? "Yes" : "No"])
-      blank()
+      html += `<tr><td colspan="${tierCols}" class="colheader">WAREHOUSE</td></tr>`
+      termsRow('Name', w.name || '')
+      termsRow('Address', `${w.street || ''}, ${w.city || ''}, ${w.state || ''} ${w.zipCode || ''}`)
+      termsRow('Third-Party Warehouse', w.isThirdPartyWarehouse === 'yes' ? 'Yes' : 'No')
     })
 
     // Remit Invoice To
-    rows.push(["REMIT INVOICE TO:"])
-    rows.push(["  Company:", termsData.remitCompanyName])
-    rows.push(["  Address:", `${termsData.remitStreet}, ${termsData.remitCity}, ${termsData.remitState} ${termsData.remitZip}`])
-    blank()
+    if (termsData.remitCompanyName) {
+      html += `<tr><td colspan="${tierCols}" class="colheader">REMIT INVOICE TO</td></tr>`
+      termsRow('Company', termsData.remitCompanyName)
+      termsRow('Address', `${termsData.remitStreet || ''}, ${termsData.remitCity || ''}, ${termsData.remitState || ''} ${termsData.remitZip || ''}`)
+    }
 
     // Shelf Life
     const shelfLives = [...new Set(skus.map((s) => s.shelfLife).filter(Boolean))]
     if (shelfLives.length > 0) {
-      rows.push(["SHELF LIFE:"])
-      shelfLives.forEach((sl) => rows.push(["  " + sl + " from Manufacture"]))
-      if (termsData.lotCodeFormat) rows.push(["  Lot Code Format:", termsData.lotCodeFormat])
-      blank()
+      html += `<tr><td colspan="${tierCols}" class="colheader">SHELF LIFE</td></tr>`
+      shelfLives.forEach((sl) => termsRow('Duration', `${sl} from Manufacture`))
+      if (termsData.lotCodeFormat) termsRow('Lot Code Format', termsData.lotCodeFormat)
     }
 
     // Terms of Sale
-    rows.push(["TERMS OF SALE:"])
-    rows.push(["  1. Minimum Order:", termsData.minimumOrder || "N/A"])
-    rows.push(["  2. Pricing:", "Pricing is Delivered Pricing"])
-    rows.push(["  3. Transportation:", termsData.transportation || "N/A"])
-    rows.push(["  4. Payment Terms:", termsData.paymentTerms || "N/A"])
-    rows.push(["  5. Lead Time:", termsData.leadTime || "N/A"])
-    rows.push(["  6. POs should be sent to:", termsData.poEmail || "N/A"])
-    if (termsData.hasCustomerPickup === "yes") {
-      rows.push(["  7. Customer Pickup Allowances:", termsData.customerPickupAllowances || "N/A"])
+    html += `<tr><td colspan="${tierCols}" class="colheader">TERMS OF SALE</td></tr>`
+    termsRow('1. Minimum Order', termsData.minimumOrder || 'N/A')
+    termsRow('2. Pricing', 'Delivered Pricing')
+    termsRow('3. Transportation', termsData.transportation || 'N/A')
+    termsRow('4. Payment Terms', termsData.paymentTerms || 'N/A')
+    termsRow('5. Lead Time', termsData.leadTime || 'N/A')
+    termsRow('6. POs should be sent to', termsData.poEmail || 'N/A')
+    if (termsData.hasCustomerPickup === 'yes') {
+      termsRow('7. Customer Pickup Allowances', termsData.customerPickupAllowances || 'N/A')
     }
-    blank()
-    blank()
-    rows.push(["Confidential and proprietary. Internal business use only unless otherwise authorized by Elohi."])
 
-    const csvContent = rows.map((row) => row.map(esc).join(",")).join("\n")
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+    // Blank row
+    html += `<tr><td colspan="${tierCols}" class="empty">&nbsp;</td></tr>`
+
+    // Footer
+    html += `<tr><td colspan="${tierCols}" style="text-align:center; font-size:9pt; color:#666; border:none; font-style:italic;">Confidential and proprietary. Internal business use only unless otherwise authorized by Elohi.</td></tr>`
+
+    html += `</table></body></html>`
+
+    const blob = new Blob([html], { type: 'application/vnd.ms-excel' })
     const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
+    const a = document.createElement('a')
     a.href = url
-    a.download = `${companyInfo.companyName || "Elohi"}_Price_Sheet.csv`
+    a.download = `${companyInfo.companyName || 'Elohi'}_Price_Sheet.xls`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -294,7 +369,7 @@ export default function Step6Results({
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
           </svg>
-          Download CSV
+          Download Excel
         </button>
         <button
           onClick={handlePrint}
