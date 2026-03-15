@@ -83,7 +83,9 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
         return (
           <div key={index} className="bg-white rounded-lg shadow p-6 space-y-5">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">SKU #{index + 1}</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {sku.productName || `SKU #${index + 1}`}
+              </h3>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => cloneSKU(index)}
@@ -101,18 +103,8 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
               </div>
             </div>
 
-            {/* Row 1: Vendor Item Number, Product Name, Case UPC */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Vendor Item Number</label>
-                <input
-                  type="text"
-                  value={sku.vendorItemNumber || ""}
-                  onChange={(e) => updateSKU(index, { ...sku, vendorItemNumber: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-                  placeholder="e.g. PBG1001"
-                />
-              </div>
+            {/* Row 1: Product Name, Case UPC */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Product Name / Description</label>
                 <input

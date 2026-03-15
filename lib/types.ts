@@ -93,6 +93,7 @@ export interface PricingResult {
 }
 
 export interface SKUPnLInputs {
+  basePricePerCase: number
   cogsPerCase: number
   freightPerTier: number[]  // 5 values
   lumpersPerTier: number[]  // 5 values
