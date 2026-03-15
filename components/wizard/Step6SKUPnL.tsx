@@ -52,7 +52,7 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
   if (skus.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">SKU Level P&L</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">Gross Profit after Trade Calculation</h2>
         <p className="text-sm text-gray-600">
           No SKUs have been added yet. Please go back to <strong>Step 2 (Product Set-Up)</strong> to add SKUs.
         </p>
@@ -109,7 +109,7 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-900">SKU Level P&L</h2>
+        <h2 className="text-xl font-semibold text-gray-900">Gross Profit after Trade Calculation</h2>
         <p className="text-sm text-gray-600 mt-1">
           Select which SKUs to view. Yellow cells are editable inputs. Gray cells are calculated.
         </p>

@@ -23,7 +23,7 @@ const STEPS = [
   "Trade Spend",
   "Shipping Tiers & Volume Fee",
   "Plants/Warehouses",
-  "Freight by Temperature Class",
+  "Gross Profit after Trade Calculation",
   "Terms and Conditions",
   "Final Price Output",
 ]
