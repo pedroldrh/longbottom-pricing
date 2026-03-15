@@ -163,21 +163,117 @@
 }
 
 /* Input styling */
-input[type="text"], input[type="number"], input[type="email"], input[type="password"], select, textarea {
+input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], select, textarea {
   background: var(--input-bg) !important;
   border-color: var(--lux-border) !important;
   border-radius: 8px !important;
   transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: 'Bilo', var(--font-body), sans-serif;
 }
 
 input:focus, select:focus, textarea:focus {
   border-color: var(--lux-accent) !important;
   box-shadow: 0 0 0 3px rgba(111, 183, 242, 0.2) !important;
+  outline: none !important;
+}
+
+/* Select dropdown styling */
+select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23393089' d='M6 8.825L1.175 4h9.65z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  padding-right: 36px !important;
+  cursor: pointer;
+}
+
+select:hover {
+  border-color: var(--lux-accent) !important;
+}
+
+/* Radio buttons */
+input[type="radio"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 18px !important;
+  height: 18px !important;
+  border: 2px solid var(--lux-border) !important;
+  border-radius: 50% !important;
+  background: var(--input-bg) !important;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  flex-shrink: 0;
+}
+
+input[type="radio"]:checked {
+  border-color: var(--lux-primary) !important;
+  background: var(--lux-primary) !important;
+  box-shadow: inset 0 0 0 3px var(--input-bg) !important;
+}
+
+input[type="radio"]:hover {
+  border-color: var(--lux-accent) !important;
+}
+
+input[type="radio"]:focus {
+  box-shadow: 0 0 0 3px rgba(111, 183, 242, 0.2) !important;
+}
+
+/* Checkboxes */
+input[type="checkbox"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 18px !important;
+  height: 18px !important;
+  border: 2px solid var(--lux-border) !important;
+  border-radius: 4px !important;
+  background: var(--input-bg) !important;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  position: relative;
+  flex-shrink: 0;
+}
+
+input[type="checkbox"]:checked {
+  border-color: var(--lux-primary) !important;
+  background: var(--lux-primary) !important;
+}
+
+input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--lux-accent) !important;
+}
+
+input[type="checkbox"]:focus {
+  box-shadow: 0 0 0 3px rgba(111, 183, 242, 0.2) !important;
+}
+
+/* Labels */
+label {
+  font-family: 'Bilo', var(--font-body), sans-serif;
 }
 
 /* Yellow input cells - warmer gold tint */
 .bg-yellow-100 {
   background: var(--yellow-input) !important;
+}
+
+/* Links */
+a {
+  transition: color 0.2s ease;
 }
 
 /* Button refinements & animations */

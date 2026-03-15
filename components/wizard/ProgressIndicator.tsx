@@ -65,14 +65,6 @@ export default function ProgressIndicator({
               >
                 {/* Step dot */}
                 <div className="relative">
-                  {/* Hover tooltip */}
-                  <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-10">
-                    <div className="bg-gray-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap">
-                      {step}
-                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45" />
-                    </div>
-                  </div>
-
                   {isActive && (
                     <div
                       className="absolute -inset-2 rounded-full opacity-30"
