@@ -42,98 +42,209 @@ export default function Step6Results({
   const handleDownloadCSV = () => {
     const rows: string[][] = []
     const esc = (v: string) => `"${v.replace(/"/g, '""')}"`
+    const blank = () => rows.push([])
+    const divider = (cols: number) => rows.push(Array(cols).fill("---"))
 
-    // Header info
-    rows.push([`${companyInfo.companyName} - National Distributor Price Sheet`])
-    rows.push([`Effective Date: ${companyInfo.effectiveDate}`])
-    rows.push([])
+    // ═══════════════════════════════════════════
+    // SECTION 1: COMPANY HEADER
+    // ═══════════════════════════════════════════
+    rows.push(["", "", "", companyInfo.companyName || ""])
+    rows.push(["", "", "", "National Distributor Price Sheet"])
+    rows.push(["", "", "", `EFFECTIVE DATE: ${companyInfo.effectiveDate || "N/A"}`])
+    if (companyInfo.contactName) {
+      rows.push(["", "", "", `Contact: ${companyInfo.contactName}  |  ${companyInfo.contactEmail || ""}  |  ${companyInfo.contactPhone || ""}`])
+    }
+    blank()
+    blank()
 
-    // Product Info table
-    rows.push(["Product Name", "Case UPC", "Unit Weight (lbs)", "Units/Case", "Lbs/Case", "Case Size", "Pallet Size", "Case Cube", "Case Net Weight", "Case Gross Weight", "Cases/Pallet", "TI", "HI"])
+    // ═══════════════════════════════════════════
+    // SECTION 2: PRODUCT INFORMATION
+    // ═══════════════════════════════════════════
+    rows.push(["PRODUCT INFORMATION"])
+    blank()
+    rows.push([
+      "Product Name / Description",
+      "Case UPC",
+      "Unit Weight (lbs.)",
+      "Units / Case",
+      "Lbs / Case",
+      "Case Size (L x W x H in.)",
+      "Pallet Size (L x W x H in.)",
+      "Case Cube (Cu. ft.)",
+      "Case Net Weight (lbs.)",
+      "Case Gross Weight (lbs.)",
+      "Cases / Pallet",
+      "Pallet TI",
+      "Pallet HI",
+    ])
     skus.forEach((sku) => {
       const lbsPerCase = sku.lbsPerUnit * sku.unitsPerCase
       rows.push([
-        sku.productName, sku.caseUPC || "", String(sku.lbsPerUnit), String(sku.unitsPerCase),
-        lbsPerCase.toFixed(2), sku.caseSize || "", sku.palletSize || "",
-        String(sku.caseCube || ""), lbsPerCase.toFixed(2), String(sku.caseGrossWeight || ""),
-        String(sku.casesPerPallet || ""), String(sku.palletTI || ""), String(sku.palletHI || ""),
+        sku.productName,
+        sku.caseUPC || "",
+        sku.lbsPerUnit.toFixed(2),
+        String(sku.unitsPerCase),
+        lbsPerCase.toFixed(2),
+        sku.caseSize || "",
+        sku.palletSize || "",
+        String(sku.caseCube || 0),
+        lbsPerCase.toFixed(2),
+        String(sku.caseGrossWeight || 0),
+        String(sku.casesPerPallet || 0),
+        String(sku.palletTI || 0),
+        String(sku.palletHI || 0),
       ])
     })
-    rows.push([])
+    blank()
+    blank()
 
-    // Bracketed Delivered Pricing
-    rows.push(["Bracketed Delivered Pricing"])
-    rows.push(["Product", "Tier 1 - " + TIER_DESCRIPTIONS[0], "Tier 2 - " + TIER_DESCRIPTIONS[1], "Tier 3 - " + TIER_DESCRIPTIONS[2], "Tier 4 - " + TIER_DESCRIPTIONS[3], "Tier 5 - " + TIER_DESCRIPTIONS[4]])
+    // ═══════════════════════════════════════════
+    // SECTION 3: BRACKETED DELIVERED PRICING
+    // ═══════════════════════════════════════════
+    rows.push(["BRACKETED DELIVERED PRICING"])
+    blank()
+    rows.push([
+      "",
+      "Tier 1",
+      "Tier 2",
+      "Tier 3",
+      "Tier 4",
+      "Tier 5",
+    ])
+    rows.push([
+      "",
+      TIER_DESCRIPTIONS[0],
+      TIER_DESCRIPTIONS[1],
+      TIER_DESCRIPTIONS[2],
+      TIER_DESCRIPTIONS[3],
+      TIER_DESCRIPTIONS[4],
+    ])
+    blank()
     skus.forEach((sku, i) => {
       rows.push([
         sku.productName,
         ...Array.from({ length: 5 }, (_, t) => `$${getDeliveredPrice(i, t).toFixed(2)}`),
       ])
     })
-    rows.push([])
+    blank()
+    blank()
 
-    // P&L per SKU
+    // ═══════════════════════════════════════════
+    // SECTION 4: SKU-LEVEL P&L (one per SKU)
+    // ═══════════════════════════════════════════
     skus.forEach((sku, skuIdx) => {
       const pnl = pnlInputs[skuIdx]
       if (!pnl) return
-      rows.push([`SKU P&L: ${sku.productName}`])
-      rows.push(["", "Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"])
 
       const basePrice = pnl.basePricePerCase || 0
       const volFees = shippingData.volumeFeePerCase
-
-      rows.push(["Base Price/Case", ...volFees.map(() => `$${basePrice.toFixed(2)}`)])
-      rows.push(["Volume Fee (%)", ...volFees.map((v) => `${v}%`)])
-      rows.push(["Volume Fee ($)", ...volFees.map((v) => `$${(basePrice * v / 100).toFixed(2)}`)])
-
       const netSells = volFees.map((v) => basePrice + basePrice * v / 100)
-      rows.push(["Net Sell Price", ...netSells.map((n) => `$${n.toFixed(2)}`)])
-
-      rows.push(["Freight Charge", ...pnl.freightPerTier.map((f) => `$${f.toFixed(2)}`)])
-      rows.push(["Lumpers Fee", ...pnl.lumpersPerTier.map((l) => `$${l.toFixed(2)}`)])
-      rows.push(["Damages Fee", ...pnl.damagesPerTier.map((d) => `$${d.toFixed(2)}`)])
-
-      const delivered = netSells.map((n, t) => n + pnl.freightPerTier[t] + pnl.lumpersPerTier[t] + pnl.damagesPerTier[t])
-      rows.push(["Delivered Sell Price", ...delivered.map((d) => `$${d.toFixed(2)}`)])
-
-      const cogsTotal = netSells.map((_, t) => pnl.cogsPerCase + pnl.freightPerTier[t] + pnl.lumpersPerTier[t] + pnl.damagesPerTier[t])
-      rows.push(["COGS ($/cs.)", ...volFees.map(() => `$${pnl.cogsPerCase.toFixed(2)}`)])
-      rows.push(["COGS Total", ...cogsTotal.map((c) => `$${c.toFixed(2)}`)])
-
-      const gpBefore = delivered.map((d, t) => d - cogsTotal[t])
-      rows.push(["GP ($) Before Trade", ...gpBefore.map((g) => `$${g.toFixed(2)}`)])
-      rows.push(["GP (%) Before Trade", ...gpBefore.map((g, t) => netSells[t] !== 0 ? `${(g / netSells[t] * 100).toFixed(1)}%` : "0%")])
-
       const ts = tradeSpendData
       const netTradePct = ts.distributorTradeAccrual + ts.operatorTradeAccrual + ts.distributorMarketingAccrual + ts.operatorMarketingAccrual + ts.deviatedBillback
-      rows.push(["Distributor Trade (" + ts.distributorTradeAccrual + "%)", ...netSells.map((n) => `$${(n * ts.distributorTradeAccrual / 100).toFixed(2)}`)])
-      rows.push(["Operator Trade (" + ts.operatorTradeAccrual + "%)", ...netSells.map((n) => `$${(n * ts.operatorTradeAccrual / 100).toFixed(2)}`)])
-      rows.push(["Distributor Marketing (" + ts.distributorMarketingAccrual + "%)", ...netSells.map((n) => `$${(n * ts.distributorMarketingAccrual / 100).toFixed(2)}`)])
-      rows.push(["Operator Marketing (" + ts.operatorMarketingAccrual + "%)", ...netSells.map((n) => `$${(n * ts.operatorMarketingAccrual / 100).toFixed(2)}`)])
-      rows.push(["Deviated Billback (" + ts.deviatedBillback + "%)", ...netSells.map((n) => `$${(n * ts.deviatedBillback / 100).toFixed(2)}`)])
-      rows.push(["Net Trade Total (" + netTradePct + "%)", ...netSells.map((n) => `$${(n * netTradePct / 100).toFixed(2)}`)])
 
+      rows.push([`SKU P&L:  ${sku.productName}`])
+      blank()
+      rows.push(["", "Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"])
+      rows.push(["", TIER_DESCRIPTIONS[0], TIER_DESCRIPTIONS[1], TIER_DESCRIPTIONS[2], TIER_DESCRIPTIONS[3], TIER_DESCRIPTIONS[4]])
+      divider(6)
+
+      // Pricing section
+      rows.push(["PRICING"])
+      rows.push(["  Base Price / Case", ...volFees.map(() => `$${basePrice.toFixed(2)}`)])
+      blank()
+      rows.push(["  Volume Based Fee (%)", ...volFees.map((v) => `${v}%`)])
+      rows.push(["  Volume Based Fee ($)", ...volFees.map((v) => `$${(basePrice * v / 100).toFixed(2)}`)])
+      blank()
+      rows.push(["  Net Sell Price (w/o Delivery)", ...netSells.map((n) => `$${n.toFixed(2)}`)])
+      divider(6)
+
+      // Freight section
+      rows.push(["FREIGHT & DELIVERY"])
+      rows.push(["  Freight Charge", ...pnl.freightPerTier.map((f) => `$${f.toFixed(2)}`)])
+      rows.push(["  Lumpers Fee", ...pnl.lumpersPerTier.map((l) => `$${l.toFixed(2)}`)])
+      rows.push(["  Damages Fee", ...pnl.damagesPerTier.map((d) => `$${d.toFixed(2)}`)])
+      blank()
+      const delivered = netSells.map((n, t) => n + pnl.freightPerTier[t] + pnl.lumpersPerTier[t] + pnl.damagesPerTier[t])
+      rows.push(["  Delivered Sell Price", ...delivered.map((d) => `$${d.toFixed(2)}`)])
+      divider(6)
+
+      // Cost & Margin section
+      rows.push(["COST & GROSS PROFIT"])
+      rows.push(["  COGS ($/case)", ...volFees.map(() => `$${pnl.cogsPerCase.toFixed(2)}`)])
+      const cogsTotal = netSells.map((_, t) => pnl.cogsPerCase + pnl.freightPerTier[t] + pnl.lumpersPerTier[t] + pnl.damagesPerTier[t])
+      rows.push(["  COGS Total (incl. freight)", ...cogsTotal.map((c) => `$${c.toFixed(2)}`)])
+      blank()
+      const gpBefore = delivered.map((d, t) => d - cogsTotal[t])
+      rows.push(["  Manufacturer GP ($) Before Trade", ...gpBefore.map((g) => `$${g.toFixed(2)}`)])
+      rows.push(["  Manufacturer GP (%) Before Trade", ...gpBefore.map((g, t) => netSells[t] !== 0 ? `${(g / netSells[t] * 100).toFixed(1)}%` : "0.0%")])
+      divider(6)
+
+      // Trade spend section
+      rows.push(["TRADE SPEND"])
+      rows.push(["  Distributor Trade Accrual (" + ts.distributorTradeAccrual + "%)", ...netSells.map((n) => `$${(n * ts.distributorTradeAccrual / 100).toFixed(2)}`)])
+      rows.push(["  Operator Trade Accrual (" + ts.operatorTradeAccrual + "%)", ...netSells.map((n) => `$${(n * ts.operatorTradeAccrual / 100).toFixed(2)}`)])
+      rows.push(["  Distributor Marketing Accrual (" + ts.distributorMarketingAccrual + "%)", ...netSells.map((n) => `$${(n * ts.distributorMarketingAccrual / 100).toFixed(2)}`)])
+      rows.push(["  Operator Marketing Accrual (" + ts.operatorMarketingAccrual + "%)", ...netSells.map((n) => `$${(n * ts.operatorMarketingAccrual / 100).toFixed(2)}`)])
+      rows.push(["  Deviated Billback (" + ts.deviatedBillback + "%)", ...netSells.map((n) => `$${(n * ts.deviatedBillback / 100).toFixed(2)}`)])
+      blank()
+      rows.push(["  Net Trade Total (" + netTradePct.toFixed(1) + "%)", ...netSells.map((n) => `$${(n * netTradePct / 100).toFixed(2)}`)])
+      divider(6)
+
+      // Final GP
+      rows.push(["FINAL MARGIN"])
       const gpAfter = gpBefore.map((g, t) => g - netSells[t] * netTradePct / 100)
-      rows.push(["GP ($) After Trade", ...gpAfter.map((g) => `$${g.toFixed(2)}`)])
-      rows.push(["GP (%) After Trade", ...gpAfter.map((g, t) => netSells[t] !== 0 ? `${(g / netSells[t] * 100).toFixed(1)}%` : "0%")])
-      rows.push([])
+      rows.push(["  Manufacturer GP ($) After Trade", ...gpAfter.map((g) => `$${g.toFixed(2)}`)])
+      rows.push(["  Manufacturer GP (%) After Trade", ...gpAfter.map((g, t) => netSells[t] !== 0 ? `${(g / netSells[t] * 100).toFixed(1)}%` : "0.0%")])
+
+      blank()
+      blank()
+      blank()
     })
 
-    // Terms
-    rows.push(["Terms and Conditions"])
-    if (companyInfo.plantsWarehouses?.[0]) {
-      const w = companyInfo.plantsWarehouses[0]
-      rows.push(["Warehouse", `${w.name}, ${w.street}, ${w.city}, ${w.state} ${w.zipCode}`])
+    // ═══════════════════════════════════════════
+    // SECTION 5: TERMS & CONDITIONS
+    // ═══════════════════════════════════════════
+    rows.push(["TERMS & CONDITIONS"])
+    blank()
+
+    // Warehouse
+    rows.push(["WAREHOUSE:"])
+    companyInfo.plantsWarehouses?.forEach((w) => {
+      rows.push(["  Name:", w.name])
+      rows.push(["  Address:", `${w.street}, ${w.city}, ${w.state} ${w.zipCode}`])
+      rows.push(["  Third-Party Warehouse:", w.isThirdPartyWarehouse === "yes" ? "Yes" : "No"])
+      blank()
+    })
+
+    // Remit Invoice To
+    rows.push(["REMIT INVOICE TO:"])
+    rows.push(["  Company:", termsData.remitCompanyName])
+    rows.push(["  Address:", `${termsData.remitStreet}, ${termsData.remitCity}, ${termsData.remitState} ${termsData.remitZip}`])
+    blank()
+
+    // Shelf Life
+    const shelfLives = [...new Set(skus.map((s) => s.shelfLife).filter(Boolean))]
+    if (shelfLives.length > 0) {
+      rows.push(["SHELF LIFE:"])
+      shelfLives.forEach((sl) => rows.push(["  " + sl + " from Manufacture"]))
+      if (termsData.lotCodeFormat) rows.push(["  Lot Code Format:", termsData.lotCodeFormat])
+      blank()
     }
-    rows.push(["Remit Invoice To", `${termsData.remitCompanyName}, ${termsData.remitStreet}, ${termsData.remitCity}, ${termsData.remitState} ${termsData.remitZip}`])
-    rows.push(["Minimum Order", termsData.minimumOrder])
-    rows.push(["Transportation", termsData.transportation])
-    rows.push(["Payment Terms", termsData.paymentTerms])
-    rows.push(["Lead Time", termsData.leadTime])
-    rows.push(["PO Email", termsData.poEmail])
+
+    // Terms of Sale
+    rows.push(["TERMS OF SALE:"])
+    rows.push(["  1. Minimum Order:", termsData.minimumOrder || "N/A"])
+    rows.push(["  2. Pricing:", "Pricing is Delivered Pricing"])
+    rows.push(["  3. Transportation:", termsData.transportation || "N/A"])
+    rows.push(["  4. Payment Terms:", termsData.paymentTerms || "N/A"])
+    rows.push(["  5. Lead Time:", termsData.leadTime || "N/A"])
+    rows.push(["  6. POs should be sent to:", termsData.poEmail || "N/A"])
     if (termsData.hasCustomerPickup === "yes") {
-      rows.push(["Customer Pickup Allowances", termsData.customerPickupAllowances])
+      rows.push(["  7. Customer Pickup Allowances:", termsData.customerPickupAllowances || "N/A"])
     }
+    blank()
+    blank()
+    rows.push(["Confidential and proprietary. Internal business use only unless otherwise authorized by Elohi."])
 
     const csvContent = rows.map((row) => row.map(esc).join(",")).join("\n")
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
