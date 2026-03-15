@@ -115,7 +115,16 @@ export default function Step7TermsConditions({ companyInfo, skus, termsData, onC
                 {shelfLives.map((sl, i) => (
                   <p key={i}>Product Shelf Life is {sl} from Manufacture</p>
                 ))}
-                <p className="mt-2">Lot Codes Printed on Each Case: reading &quot;XXXXX-YYYY&quot;</p>
+                <div className="mt-2 flex items-center gap-2 flex-wrap">
+                  <span>Lot Codes Printed on Each Case: reading</span>
+                  <input
+                    type="text"
+                    value={termsData.lotCodeFormat}
+                    onChange={(e) => update("lotCodeFormat", e.target.value)}
+                    className="inline-block w-40 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-2 py-1 border"
+                    placeholder="e.g. XXXXX-YYYY"
+                  />
+                </div>
               </div>
             ) : (
               <p className="text-sm text-gray-400 italic">No shelf life info (add it in Product Set-Up).</p>

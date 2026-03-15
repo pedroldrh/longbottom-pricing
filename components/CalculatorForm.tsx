@@ -194,6 +194,7 @@ export default function CalculatorForm() {
     leadTime: "",
     poEmail: "",
     customerPickupAllowances: "",
+    lotCodeFormat: "",
   }
 
   const [termsData, setTermsData] = useState<TermsConditions>(() => {
@@ -432,6 +433,7 @@ export default function CalculatorForm() {
       leadTime: "3 weeks from receipt of PO to ship date",
       poEmail: "orders@longbottomfoods.com",
       customerPickupAllowances: "Contact for details",
+      lotCodeFormat: "XXXXX-YYYY",
     })
 
     setCurrentStep(1)

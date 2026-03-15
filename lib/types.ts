@@ -94,4 +94,5 @@ export interface TermsConditions {
   leadTime: string
   poEmail: string
   customerPickupAllowances: string
+  lotCodeFormat: string
 }
