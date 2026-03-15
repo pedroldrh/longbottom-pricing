@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import type { SKUInput, SKUPnLInputs, CompanyInfo, TermsConditions } from "@/lib/types"
+import ConfirmModal from "./ConfirmModal"
 import ProgressIndicator from "./wizard/ProgressIndicator"
 import Step1CompanyInfo from "./wizard/Step1CompanyInfo"
 import Step2ShippingTiers from "./wizard/Step2ShippingTiers"
@@ -254,6 +255,11 @@ export default function CalculatorForm() {
     })
   }, [skus.length])
 
+  const [modal, setModal] = useState<{
+    open: boolean
+    type: "startOver" | "example"
+  }>({ open: false, type: "startOver" })
+
   const nextStep = () => {
     if (currentStep < STEPS.length) {
       setCurrentStep(currentStep + 1)
@@ -266,8 +272,7 @@ export default function CalculatorForm() {
     }
   }
 
-  const handleStartOver = () => {
-    if (confirm("Are you sure you want to start over? All data will be cleared.")) {
+  const doStartOver = () => {
       // Clear all localStorage
       Object.values(STORAGE_KEYS).forEach((key) => {
         localStorage.removeItem(key)
@@ -306,16 +311,9 @@ export default function CalculatorForm() {
       setSkus([])
       setPnlInputs([])
       setTermsData(emptyTerms)
-    }
   }
 
-  const handleSeeExample = () => {
-    if (
-      !confirm(
-        "This will fill all fields with example data to demonstrate a complete pricing model. Any existing data will be overwritten. Continue?"
-      )
-    )
-      return
+  const doSeeExample = () => {
 
     setCompanyInfo({
       effectiveDate: "04/01/2023",
@@ -465,7 +463,7 @@ export default function CalculatorForm() {
         />
         <div className="flex justify-center gap-3 pt-2">
           <button
-            onClick={handleSeeExample}
+            onClick={() => setModal({ open: true, type: "example" })}
             className="px-5 py-2 border-2 text-sm rounded-md font-medium transition-colors"
             style={{
               borderColor: 'var(--lux-accent)',
@@ -481,7 +479,7 @@ export default function CalculatorForm() {
             See Example Model
           </button>
           <button
-            onClick={handleStartOver}
+            onClick={() => setModal({ open: true, type: "startOver" })}
             className="px-5 py-2 text-white text-sm rounded-md font-medium transition-colors"
             style={{ background: 'var(--elohi-fuchsia)' }}
             onMouseEnter={(e) => (e.currentTarget.style.background = '#c9163f')}
@@ -554,6 +552,28 @@ export default function CalculatorForm() {
           {currentStep === STEPS.length ? "Complete" : "Next"}
         </button>
       </div>
+
+      {/* Custom confirmation modals */}
+      <ConfirmModal
+        open={modal.open && modal.type === "startOver"}
+        title="Start Over?"
+        message="This will clear all data you've entered across every step. This action cannot be undone."
+        confirmLabel="Clear Everything"
+        cancelLabel="Keep Working"
+        variant="danger"
+        onConfirm={() => { setModal({ open: false, type: "startOver" }); doStartOver() }}
+        onCancel={() => setModal({ open: false, type: "startOver" })}
+      />
+      <ConfirmModal
+        open={modal.open && modal.type === "example"}
+        title="Load Example Model"
+        message="This will fill all fields with sample data from a complete pricing model. Any existing data will be overwritten."
+        confirmLabel="Load Example"
+        cancelLabel="Cancel"
+        variant="info"
+        onConfirm={() => { setModal({ open: false, type: "example" }); doSeeExample() }}
+        onCancel={() => setModal({ open: false, type: "example" })}
+      />
     </div>
   )
 }
