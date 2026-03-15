@@ -111,3 +111,17 @@ export interface CompanyInfo {
   contactPhone: string
   plantsWarehouses: PlantWarehouse[]
 }
+
+export interface TermsConditions {
+  remitCompanyName: string
+  remitStreet: string
+  remitCity: string
+  remitState: string
+  remitZip: string
+  minimumOrder: string
+  transportation: string
+  paymentTerms: string
+  leadTime: string
+  poEmail: string
+  customerPickupAllowances: string
+}

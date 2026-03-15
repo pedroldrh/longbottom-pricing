@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { calculatePricing } from "@/app/actions"
-import type { PricingResult, SKUInput, Settings, CompanyInfo } from "@/lib/types"
+import type { PricingResult, SKUInput, Settings, CompanyInfo, TermsConditions } from "@/lib/types"
 import SettingsPanel from "./SettingsPanel"
 import ResultsTable from "./ResultsTable"
 import defaults from "@/config/defaults.json"
@@ -34,6 +34,7 @@ const STORAGE_KEYS = {
   FREIGHT_DATA: "pricing_calculator_freight_data",
   TRADE_SPEND_DATA: "pricing_calculator_trade_spend_data",
   SKUS: "pricing_calculator_skus",
+  TERMS_DATA: "pricing_calculator_terms_data",
 }
 
 export default function CalculatorForm() {
@@ -194,6 +195,34 @@ export default function CalculatorForm() {
     return []
   })
 
+  const emptyTerms: TermsConditions = {
+    remitCompanyName: "",
+    remitStreet: "",
+    remitCity: "",
+    remitState: "",
+    remitZip: "",
+    minimumOrder: "",
+    transportation: "",
+    paymentTerms: "",
+    leadTime: "",
+    poEmail: "",
+    customerPickupAllowances: "",
+  }
+
+  const [termsData, setTermsData] = useState<TermsConditions>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(STORAGE_KEYS.TERMS_DATA)
+      if (saved) {
+        try {
+          return { ...emptyTerms, ...JSON.parse(saved) }
+        } catch (e) {
+          console.error("Failed to parse terms data from localStorage", e)
+        }
+      }
+    }
+    return emptyTerms
+  })
+
   const [results, setResults] = useState<PricingResult[]>([])
   const [isCalculating, setIsCalculating] = useState(false)
 
@@ -220,6 +249,10 @@ export default function CalculatorForm() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.SKUS, JSON.stringify(skus))
   }, [skus])
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.TERMS_DATA, JSON.stringify(termsData))
+  }, [termsData])
 
   const handleCalculate = async () => {
     setIsCalculating(true)
@@ -311,6 +344,7 @@ export default function CalculatorForm() {
         deviatedBillback: 0,
       })
       setSkus([])
+      setTermsData(emptyTerms)
       setResults([])
     }
   }
@@ -392,7 +426,14 @@ export default function CalculatorForm() {
       {currentStep === 6 && (
         <Step3FreightRates data={freightData} tierLabels={shippingData.tierLabels} onChange={setFreightData} />
       )}
-      {currentStep === 7 && <Step7TermsConditions />}
+      {currentStep === 7 && (
+        <Step7TermsConditions
+          companyInfo={companyInfo}
+          skus={skus}
+          termsData={termsData}
+          onChange={setTermsData}
+        />
+      )}
       {currentStep === 8 && (
         <Step6Results skus={skus} results={results} onCalculate={handleCalculate} isCalculating={isCalculating} />
       )}
