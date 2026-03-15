@@ -15,26 +15,40 @@ export default function ProgressIndicator({
   steps,
   onStepClick,
 }: ProgressIndicatorProps) {
-  const progressPct = ((currentStep - 1) / (totalSteps - 1)) * 100
+  // Each step is centered in a column of width (100/totalSteps)%.
+  // The center of step i is at: (i + 0.5) * (100/totalSteps) %.
+  // Track should span from center of first dot to center of last dot.
+  const stepWidth = 100 / totalSteps
+  const trackLeft = stepWidth / 2
+  const trackRight = 100 - stepWidth / 2
+  const trackWidth = trackRight - trackLeft
+
+  // Fill goes from the first dot center to the current dot center.
+  const fillPct = totalSteps > 1
+    ? ((currentStep - 1) / (totalSteps - 1)) * 100
+    : 0
 
   return (
     <div className="w-full">
-      {/* Main track container */}
       <div className="relative">
-        {/* Background track */}
-        <div className="absolute top-5 left-0 right-0 h-[3px] bg-gray-200 rounded-full" />
+        {/* Background track — spans from center of first dot to center of last dot */}
+        <div
+          className="absolute top-5 h-[3px] bg-gray-200 rounded-full"
+          style={{ left: `${trackLeft}%`, width: `${trackWidth}%` }}
+        />
 
         {/* Filled track */}
         <div
-          className="absolute top-5 left-0 h-[3px] rounded-full transition-all duration-500 ease-out"
+          className="absolute top-5 h-[3px] rounded-full transition-all duration-500 ease-out"
           style={{
-            width: `${progressPct}%`,
+            left: `${trackLeft}%`,
+            width: `${trackWidth * fillPct / 100}%`,
             background: "linear-gradient(90deg, #0d9488, #0891b2)",
           }}
         />
 
         {/* Steps */}
-        <div className="relative flex justify-between">
+        <div className="relative flex">
           {steps.map((step, index) => {
             const stepNumber = index + 1
             const isActive = stepNumber === currentStep
@@ -47,11 +61,10 @@ export default function ProgressIndicator({
                 type="button"
                 onClick={() => onStepClick(stepNumber)}
                 className="group flex flex-col items-center relative"
-                style={{ width: `${100 / totalSteps}%` }}
+                style={{ width: `${stepWidth}%` }}
               >
-                {/* Step dot/marker */}
+                {/* Step dot */}
                 <div className="relative">
-                  {/* Pulse ring for active step */}
                   {isActive && (
                     <div
                       className="absolute -inset-2 rounded-full opacity-30"

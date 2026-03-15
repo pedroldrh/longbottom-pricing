@@ -435,7 +435,7 @@ export default function CalculatorForm() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="bg-white rounded-lg shadow p-6 space-y-4">
         <ProgressIndicator
           currentStep={currentStep}
           completedSteps={completedSteps}
@@ -443,12 +443,14 @@ export default function CalculatorForm() {
           steps={STEPS}
           onStepClick={setCurrentStep}
         />
-        <button
-          onClick={handleStartOver}
-          className="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 font-medium"
-        >
-          Start Over
-        </button>
+        <div className="flex justify-center pt-2">
+          <button
+            onClick={handleStartOver}
+            className="px-5 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 font-medium transition-colors"
+          >
+            Start Over
+          </button>
+        </div>
       </div>
 
       {currentStep === 1 && <Step1CompanyInfo data={companyInfo} onChange={setCompanyInfo} />}
