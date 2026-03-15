@@ -317,15 +317,17 @@ export default function Step6Results({
                       {termsData.poEmail || "N/A"}
                     </div>
                   </div>
-                  <div className="flex">
-                    <span className="font-semibold w-2 shrink-0">6.</span>
-                    <div className="ml-1">
-                      <span className="font-semibold">Customer Pickup Allowances:</span>{" "}
-                      {termsData.customerPickupAllowances || "N/A"}
+                  {termsData.hasCustomerPickup === "yes" && (
+                    <div className="flex">
+                      <span className="font-semibold w-2 shrink-0">6.</span>
+                      <div className="ml-1">
+                        <span className="font-semibold">Customer Pickup Allowances:</span>{" "}
+                        {termsData.customerPickupAllowances || "N/A"}
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div className="flex">
-                    <span className="font-semibold w-2 shrink-0">7.</span>
+                    <span className="font-semibold w-2 shrink-0">{termsData.hasCustomerPickup === "yes" ? "7." : "6."}</span>
                     <div className="ml-1">
                       <span className="font-semibold">Temperature Class:</span>{" "}
                       {skus.length > 0

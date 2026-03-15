@@ -93,6 +93,7 @@ export interface TermsConditions {
   paymentTerms: string
   leadTime: string
   poEmail: string
+  hasCustomerPickup: "yes" | "no" | ""
   customerPickupAllowances: string
   lotCodeFormat: string
 }

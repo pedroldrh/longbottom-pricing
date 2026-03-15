@@ -196,6 +196,7 @@ export default function CalculatorForm() {
     paymentTerms: "",
     leadTime: "",
     poEmail: "",
+    hasCustomerPickup: "",
     customerPickupAllowances: "",
     lotCodeFormat: "",
   }
@@ -441,6 +442,7 @@ export default function CalculatorForm() {
       paymentTerms: "Net 30",
       leadTime: "3 weeks from receipt of PO to ship date",
       poEmail: "orders@longbottomfoods.com",
+      hasCustomerPickup: "yes",
       customerPickupAllowances: "Contact for details",
       lotCodeFormat: "XXXXX-YYYY",
     })
