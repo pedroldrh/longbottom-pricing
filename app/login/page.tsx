@@ -8,12 +8,33 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-md">
-        <div>
-          <h2 className="text-center text-3xl font-bold text-gray-900">Elohi Pricing Calculator</h2>
-          <p className="mt-2 text-center text-sm text-gray-600">Enter password to access calculator</p>
-          <p className="mt-2 text-center text-xs text-gray-500">
+    <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-cream)' }}>
+      <div className="max-w-md w-full space-y-8 p-10" style={{
+        background: 'var(--bg-card)',
+        borderRadius: '16px',
+        boxShadow: '0 4px 24px rgba(26, 58, 45, 0.08), 0 1px 4px rgba(26, 58, 45, 0.04)',
+        borderTop: '4px solid var(--lux-accent)',
+        border: '1px solid var(--lux-border)',
+        borderTopColor: 'var(--lux-accent)',
+        borderTopWidth: '4px',
+      }}>
+        <div className="text-center">
+          <h2 className="text-3xl font-bold" style={{
+            fontFamily: 'var(--font-heading), Fraunces, serif',
+            color: 'var(--text-primary)',
+            fontWeight: 700,
+          }}>
+            Elohi Pricing Calculator
+          </h2>
+          <div className="flex items-center justify-center gap-4 mt-4">
+            <div style={{ height: '1px', width: '60px', background: 'var(--lux-accent)' }} />
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--lux-accent)' }} />
+            <div style={{ height: '1px', width: '60px', background: 'var(--lux-accent)' }} />
+          </div>
+          <p className="mt-4 text-sm" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body), DM Sans, sans-serif' }}>
+            Enter password to access calculator
+          </p>
+          <p className="mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>
             Confidential and proprietary. Authorized business use only.
           </p>
         </div>
@@ -27,13 +48,20 @@ export default function LoginPage() {
               name="password"
               type={showPassword ? "text" : "password"}
               required
-              className="appearance-none rounded-md relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              className="appearance-none relative block w-full px-4 py-3 pr-10 text-sm"
               placeholder="Password"
+              style={{
+                background: 'var(--input-bg)',
+                border: '1px solid var(--lux-border)',
+                borderRadius: '8px',
+                color: 'var(--text-primary)',
+              }}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              style={{ color: 'var(--text-muted)' }}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
@@ -45,7 +73,14 @@ export default function LoginPage() {
           </div>
           <button
             type="submit"
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-md text-white transition-colors duration-200"
+            style={{
+              background: 'var(--lux-primary)',
+              borderRadius: '8px',
+              letterSpacing: '0.02em',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--primary-light)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--lux-primary)')}
           >
             Sign in
           </button>

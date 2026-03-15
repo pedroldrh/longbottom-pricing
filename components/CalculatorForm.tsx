@@ -453,13 +453,26 @@ export default function CalculatorForm() {
         <div className="flex justify-center gap-3 pt-2">
           <button
             onClick={handleSeeExample}
-            className="px-5 py-2 border-2 border-teal-600 text-teal-700 text-sm rounded-md hover:bg-teal-50 font-medium transition-colors"
+            className="px-5 py-2 border-2 text-sm rounded-md font-medium transition-colors"
+            style={{
+              borderColor: 'var(--lux-accent)',
+              color: 'var(--lux-accent)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(184, 134, 11, 0.06)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+            }}
           >
             See Example Model
           </button>
           <button
             onClick={handleStartOver}
-            className="px-5 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 font-medium transition-colors"
+            className="px-5 py-2 text-white text-sm rounded-md font-medium transition-colors"
+            style={{ background: '#9B2C2C' }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#822727')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#9B2C2C')}
           >
             Start Over
           </button>
@@ -509,14 +522,21 @@ export default function CalculatorForm() {
           Previous
         </button>
 
-        <div className="text-sm text-gray-600">
+        <div className="text-sm" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-heading), Fraunces, serif' }}>
           Step {currentStep} of {STEPS.length}
         </div>
 
         <button
           onClick={nextStep}
           disabled={currentStep === STEPS.length}
-          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium"
+          className="px-6 py-2 text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed font-medium transition-colors"
+          style={{ background: currentStep === STEPS.length ? undefined : 'var(--lux-primary)' }}
+          onMouseEnter={(e) => {
+            if (currentStep !== STEPS.length) e.currentTarget.style.background = 'var(--primary-light)'
+          }}
+          onMouseLeave={(e) => {
+            if (currentStep !== STEPS.length) e.currentTarget.style.background = 'var(--lux-primary)'
+          }}
         >
           {currentStep === STEPS.length ? "Complete" : "Next"}
         </button>

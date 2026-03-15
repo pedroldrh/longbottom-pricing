@@ -31,19 +31,19 @@ export default function ProgressIndicator({
   return (
     <div className="w-full">
       <div className="relative">
-        {/* Background track — spans from center of first dot to center of last dot */}
+        {/* Background track — thin gold line */}
         <div
-          className="absolute top-5 h-[3px] bg-gray-200 rounded-full"
-          style={{ left: `${trackLeft}%`, width: `${trackWidth}%` }}
+          className="absolute top-5 h-[2px] rounded-full"
+          style={{ left: `${trackLeft}%`, width: `${trackWidth}%`, background: 'var(--border-accent)' }}
         />
 
-        {/* Filled track */}
+        {/* Filled track — gradient from gold to green */}
         <div
-          className="absolute top-5 h-[3px] rounded-full transition-all duration-500 ease-out"
+          className="absolute top-5 h-[2px] rounded-full transition-all duration-500 ease-out"
           style={{
             left: `${trackLeft}%`,
             width: `${trackWidth * fillPct / 100}%`,
-            background: "linear-gradient(90deg, #0d9488, #0891b2)",
+            background: "linear-gradient(90deg, var(--lux-accent), var(--lux-primary))",
           }}
         />
 
@@ -69,45 +69,65 @@ export default function ProgressIndicator({
                     <div
                       className="absolute -inset-2 rounded-full opacity-30"
                       style={{
-                        background: "radial-gradient(circle, #0d9488 0%, transparent 70%)",
-                        animation: "pulse-ring 2s ease-in-out infinite",
+                        background: "radial-gradient(circle, var(--lux-accent) 0%, transparent 70%)",
+                        animation: "pulse-ring-gold 2s ease-in-out infinite",
                       }}
                     />
                   )}
 
                   <div
-                    className={`
-                      relative w-[42px] h-[42px] rounded-full flex items-center justify-center
-                      text-xs font-bold transition-all duration-300 ease-out
-                      ${isActive
-                        ? "bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/30 scale-110"
+                    className="relative w-[42px] h-[42px] rounded-full flex items-center justify-center transition-all duration-300 ease-out"
+                    style={
+                      isActive
+                        ? {
+                            background: 'var(--lux-primary)',
+                            color: '#fff',
+                            boxShadow: '0 4px 14px rgba(27, 58, 45, 0.25)',
+                            transform: 'scale(1.1)',
+                            fontFamily: 'var(--font-heading), Fraunces, serif',
+                            fontSize: '13px',
+                            fontWeight: 700,
+                          }
                         : isCompleted
-                          ? "bg-teal-600 text-white shadow-md shadow-teal-600/20"
-                          : "bg-white text-gray-400 border-2 border-gray-200 group-hover:border-teal-300 group-hover:text-teal-500"
-                      }
-                    `}
+                          ? {
+                              background: 'var(--lux-accent)',
+                              color: '#fff',
+                              boxShadow: '0 2px 8px rgba(184, 134, 11, 0.2)',
+                              fontSize: '13px',
+                              fontWeight: 700,
+                            }
+                          : {
+                              background: 'var(--bg-cream)',
+                              color: 'var(--text-muted)',
+                              border: '2px solid var(--border-accent)',
+                              fontFamily: 'var(--font-heading), Fraunces, serif',
+                              fontSize: '13px',
+                              fontWeight: 600,
+                            }
+                    }
                   >
                     {isCompleted ? (
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
-                      <span className={isActive ? "tracking-wide" : ""}>{stepNumber}</span>
+                      <span>{stepNumber}</span>
                     )}
                   </div>
                 </div>
 
                 {/* Step label */}
                 <span
-                  className={`
-                    mt-2.5 text-[11px] leading-tight text-center max-w-[90px] transition-colors duration-200
-                    ${isActive
-                      ? "font-semibold text-teal-700"
-                      : isCompleted || isPast
-                        ? "font-medium text-gray-600"
-                        : "text-gray-400 group-hover:text-gray-600"
-                    }
-                  `}
+                  className="mt-2.5 text-[11px] leading-tight text-center max-w-[90px] transition-colors duration-200"
+                  style={{
+                    fontFamily: 'var(--font-body), DM Sans, sans-serif',
+                    fontWeight: isActive ? 600 : (isCompleted || isPast) ? 500 : 400,
+                    color: isActive
+                      ? 'var(--lux-primary)'
+                      : (isCompleted || isPast)
+                        ? 'var(--text-secondary)'
+                        : 'var(--text-muted)',
+                  }}
                 >
                   {step}
                 </span>
@@ -118,7 +138,7 @@ export default function ProgressIndicator({
       </div>
 
       <style jsx>{`
-        @keyframes pulse-ring {
+        @keyframes pulse-ring-gold {
           0%, 100% { transform: scale(1); opacity: 0.3; }
           50% { transform: scale(1.4); opacity: 0.1; }
         }
