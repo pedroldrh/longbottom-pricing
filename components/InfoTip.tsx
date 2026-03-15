@@ -36,9 +36,9 @@ export default function InfoTip({ text }: InfoTipProps) {
         i
       </button>
       {show && (
-        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-20 w-64 bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg leading-relaxed">
+        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 z-20 w-64 bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg leading-relaxed">
           {text}
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45" />
+          <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 bg-gray-800 rotate-45" />
         </div>
       )}
     </span>
