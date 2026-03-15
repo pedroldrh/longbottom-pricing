@@ -88,7 +88,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
         const caseNetWeight = sku.lbsPerUnit * sku.unitsPerCase
 
         return (
-          <div key={index} className="bg-white rounded-lg shadow p-6 space-y-5">
+          <div key={index} className="bg-white rounded-lg shadow p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">
                 {sku.productName || `SKU #${index + 1}`}
