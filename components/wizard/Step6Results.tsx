@@ -43,10 +43,10 @@ export default function Step6Results({
     // Helper to escape HTML entities
     const esc = (v: string | number) => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
-    // Column count for product info table
-    const prodCols = 13
-    // Column count for tier-based tables
-    const tierCols = 6
+    // Total width = 13 columns throughout
+    const totalCols = 13
+    // Each SKU P&L block = 6 data columns (1 label + 5 tiers)
+    const blockCols = 6
 
     let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
 <head>
@@ -79,25 +79,25 @@ export default function Step6Results({
 <table>`
 
     // ═══════════════════════════════════════════
-    // ROW 1-3: COMPANY HEADER
+    // SECTION 1: COMPANY HEADER (13 cols, centered)
     // ═══════════════════════════════════════════
-    html += `<tr><td colspan="${prodCols}" class="header" style="font-size:16pt;">${esc(companyInfo.companyName || 'Elohi')}</td></tr>`
-    html += `<tr><td colspan="${prodCols}" class="header-sub">National Distributor Price Sheet</td></tr>`
+    html += `<tr><td colspan="${totalCols}" class="header" style="font-size:16pt;">${esc(companyInfo.companyName || 'Elohi')}</td></tr>`
+    html += `<tr><td colspan="${totalCols}" class="header-sub">National Distributor Price Sheet</td></tr>`
     let headerLine3 = `EFFECTIVE DATE: ${esc(companyInfo.effectiveDate || 'N/A')}`
     if (companyInfo.contactName) {
       headerLine3 += `&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;${esc(companyInfo.contactName)}`
       if (companyInfo.contactEmail) headerLine3 += `&nbsp;&nbsp;${esc(companyInfo.contactEmail)}`
       if (companyInfo.contactPhone) headerLine3 += `&nbsp;&nbsp;${esc(companyInfo.contactPhone)}`
     }
-    html += `<tr><td colspan="${prodCols}" class="header-sm">${headerLine3}</td></tr>`
+    html += `<tr><td colspan="${totalCols}" class="header-sm">${headerLine3}</td></tr>`
 
     // Blank row
-    html += `<tr><td colspan="${prodCols}" class="empty">&nbsp;</td></tr>`
+    html += `<tr><td colspan="${totalCols}" class="empty">&nbsp;</td></tr>`
 
     // ═══════════════════════════════════════════
-    // PRODUCT INFORMATION
+    // SECTION 2: PRODUCT INFORMATION (13 cols)
     // ═══════════════════════════════════════════
-    html += `<tr><td colspan="${prodCols}" class="section">PRODUCT INFORMATION</td></tr>`
+    html += `<tr><td colspan="${totalCols}" class="section">PRODUCT INFORMATION</td></tr>`
     const prodHeaders = [
       'Product Name / Description', 'Case UPC', 'Unit Wt. (lbs)', 'Units / Case',
       'Lbs / Case', 'Case Size (L x W x H)', 'Pallet Size (L x W x H)',
@@ -127,20 +127,45 @@ export default function Step6Results({
     })
 
     // Blank row
-    html += `<tr><td colspan="${prodCols}" class="empty">&nbsp;</td></tr>`
+    html += `<tr><td colspan="${totalCols}" class="empty">&nbsp;</td></tr>`
 
     // ═══════════════════════════════════════════
-    // BRACKETED DELIVERED PRICING
+    // SECTION 3: SKU SUMMARY + BRACKETED DELIVERED PRICING
     // ═══════════════════════════════════════════
-    html += `<tr><td colspan="${tierCols}" class="section">BRACKETED DELIVERED PRICING</td></tr>`
+
+    // SKU Summary table (left side, columns 1-7)
+    html += `<tr><td colspan="7" class="section">SKU SUMMARY</td><td colspan="6" class="empty">&nbsp;</td></tr>`
+    const skuSumHeaders = ['#', 'Product', 'Lbs/Unit', 'Units/Case', 'Lbs/Case', 'Base Price/Case', 'COGS/Cs.']
+    html += '<tr>' + skuSumHeaders.map((h) => `<td class="colheader-c">${esc(h)}</td>`).join('') + Array(6).fill('<td class="empty">&nbsp;</td>').join('') + '</tr>'
+    skus.forEach((sku, idx) => {
+      const pnl = pnlInputs[idx]
+      const lbsPerCase = sku.lbsPerUnit * sku.unitsPerCase
+      const altClass = idx % 2 === 1 ? ' alt' : ''
+      html += `<tr>`
+      html += `<td class="center${altClass}">${idx + 1}</td>`
+      html += `<td class="${altClass}">${esc(sku.productName)}</td>`
+      html += `<td class="center${altClass}">${sku.lbsPerUnit.toFixed(2)}</td>`
+      html += `<td class="center${altClass}">${sku.unitsPerCase}</td>`
+      html += `<td class="center${altClass}">${lbsPerCase.toFixed(2)}</td>`
+      html += `<td class="money${altClass}">$${(pnl?.basePricePerCase || 0).toFixed(2)}</td>`
+      html += `<td class="money${altClass}">$${(pnl?.cogsPerCase || 0).toFixed(2)}</td>`
+      html += Array(6).fill('<td class="empty">&nbsp;</td>').join('')
+      html += `</tr>`
+    })
+
+    // Blank row
+    html += `<tr><td colspan="${totalCols}" class="empty">&nbsp;</td></tr>`
+
+    // Bracketed Delivered Pricing (spans all 13 columns for header, then 6 data cols)
+    html += `<tr><td colspan="${totalCols}" class="section">BRACKETED DELIVERED PRICING</td></tr>`
     // Tier name header
     html += `<tr><td class="colheader">&nbsp;</td>`
     for (let i = 0; i < 5; i++) html += `<td class="colheader-c">Tier ${i + 1}</td>`
-    html += `</tr>`
+    html += Array(7).fill('<td class="empty">&nbsp;</td>').join('') + `</tr>`
     // Tier description sub-header
     html += `<tr><td class="colheader">&nbsp;</td>`
     for (let i = 0; i < 5; i++) html += `<td class="colheader-c" style="font-size:8pt; font-weight:normal;">${esc(TIER_DESCRIPTIONS[i])}</td>`
-    html += `</tr>`
+    html += Array(7).fill('<td class="empty">&nbsp;</td>').join('') + `</tr>`
     // Product rows
     skus.forEach((sku, skuIdx) => {
       const altClass = skuIdx % 2 === 1 ? ' alt' : ''
@@ -149,18 +174,23 @@ export default function Step6Results({
       for (let t = 0; t < 5; t++) {
         html += `<td class="money${altClass}">$${getDeliveredPrice(skuIdx, t).toFixed(2)}</td>`
       }
+      html += Array(7).fill('<td class="empty">&nbsp;</td>').join('')
       html += `</tr>`
     })
 
     // Blank row
-    html += `<tr><td colspan="${tierCols}" class="empty">&nbsp;</td></tr>`
+    html += `<tr><td colspan="${totalCols}" class="empty">&nbsp;</td></tr>`
 
     // ═══════════════════════════════════════════
-    // PER-SKU P&L SECTIONS
+    // SECTION 4: SKU P&Ls SIDE BY SIDE
     // ═══════════════════════════════════════════
-    skus.forEach((sku, skuIdx) => {
+
+    // Build a P&L block for one SKU as an array of rows.
+    // Each row is an array of 6 <td> HTML strings: [label, tier1, tier2, tier3, tier4, tier5]
+    const buildPnlBlock = (skuIdx: number): string[][] => {
+      const sku = skus[skuIdx]
       const pnl = pnlInputs[skuIdx]
-      if (!pnl) return
+      if (!pnl) return []
 
       const basePrice = pnl.basePricePerCase || 0
       const volFees = shippingData.volumeFeePerCase
@@ -168,157 +198,302 @@ export default function Step6Results({
       const ts = tradeSpendData
       const netTradePct = ts.distributorTradeAccrual + ts.operatorTradeAccrual + ts.distributorMarketingAccrual + ts.operatorMarketingAccrual + ts.deviatedBillback
 
-      // SKU Header
-      html += `<tr><td colspan="${tierCols}" class="header-sub" style="text-align:left;">SKU P&amp;L: ${esc(sku.productName)}</td></tr>`
-      // Tier headers
-      html += `<tr><td class="colheader">&nbsp;</td>`
-      for (let i = 0; i < 5; i++) html += `<td class="colheader-c">Tier ${i + 1}</td>`
-      html += `</tr>`
-      html += `<tr><td class="colheader">&nbsp;</td>`
-      for (let i = 0; i < 5; i++) html += `<td class="colheader-c" style="font-size:8pt; font-weight:normal;">${esc(TIER_DESCRIPTIONS[i])}</td>`
-      html += `</tr>`
-
-      // Helper for data rows
-      const dataRow = (label: string, values: string[], cls?: string) => {
-        html += `<tr><td class="bold">${esc(label)}</td>`
-        values.forEach((v) => {
-          const extraCls = cls ? ` ${cls}` : ''
-          html += `<td class="right${extraCls}">${esc(v)}</td>`
-        })
-        html += `</tr>`
-      }
-      const moneyRow = (label: string, values: number[], cls?: string) => {
-        html += `<tr><td class="bold">${esc(label)}</td>`
-        values.forEach((v) => {
-          const extraCls = cls ? ` ${cls}` : ''
-          html += `<td class="money${extraCls}">$${v.toFixed(2)}</td>`
-        })
-        html += `</tr>`
-      }
-      const pctRow = (label: string, values: number[], bases: number[], cls?: string) => {
-        html += `<tr><td class="bold">${esc(label)}</td>`
-        values.forEach((v, i) => {
-          const pctVal = bases[i] !== 0 ? (v / bases[i] * 100).toFixed(1) : '0.0'
-          const extraCls = cls ? ` ${cls}` : ''
-          html += `<td class="pct${extraCls}">${pctVal}%</td>`
-        })
-        html += `</tr>`
-      }
-      const gpClass = (values: number[]) => values.map((v) => v >= 0 ? 'pos' : 'neg')
-      const moneyRowGP = (label: string, values: number[]) => {
-        html += `<tr><td class="bold">${esc(label)}</td>`
-        values.forEach((v) => {
-          const cls = v >= 0 ? 'pos' : 'neg'
-          html += `<td class="money ${cls}">$${v.toFixed(2)}</td>`
-        })
-        html += `</tr>`
-      }
-      const pctRowGP = (label: string, values: number[], bases: number[]) => {
-        html += `<tr><td class="bold">${esc(label)}</td>`
-        values.forEach((v, i) => {
-          const pctVal = bases[i] !== 0 ? (v / bases[i] * 100).toFixed(1) : '0.0'
-          const cls = v >= 0 ? 'pos' : 'neg'
-          html += `<td class="pct ${cls}">${pctVal}%</td>`
-        })
-        html += `</tr>`
-      }
-
-      // PRICING sub-section
-      html += `<tr><td colspan="${tierCols}" class="subsection">PRICING</td></tr>`
-      moneyRow('Base Price / Case', volFees.map(() => basePrice), 'input')
-      dataRow('Volume Based Fee (%)', volFees.map((v) => `${v}%`))
-      moneyRow('Volume Based Fee ($)', volFees.map((v) => basePrice * v / 100))
-      moneyRow('Net Sell Price (w/o Delivery)', netSells)
-
-      // FREIGHT sub-section
-      html += `<tr><td colspan="${tierCols}" class="subsection">FREIGHT &amp; DELIVERY</td></tr>`
-      moneyRow('Freight Charge', pnl.freightPerTier.map((f) => f), 'input')
-      moneyRow('Lumpers Fee', pnl.lumpersPerTier.map((l) => l), 'input')
-      moneyRow('Damages Fee', pnl.damagesPerTier.map((d) => d), 'input')
       const delivered = netSells.map((n, t) => n + pnl.freightPerTier[t] + pnl.lumpersPerTier[t] + pnl.damagesPerTier[t])
-      html += `<tr><td class="bold divider">Delivered Sell Price</td>`
-      delivered.forEach((d) => { html += `<td class="money bold divider">$${d.toFixed(2)}</td>` })
-      html += `</tr>`
-
-      // COST sub-section
-      html += `<tr><td colspan="${tierCols}" class="subsection">COST &amp; GROSS PROFIT</td></tr>`
-      moneyRow('COGS ($/case)', volFees.map(() => pnl.cogsPerCase), 'input')
       const cogsTotal = netSells.map((_, t) => pnl.cogsPerCase + pnl.freightPerTier[t] + pnl.lumpersPerTier[t] + pnl.damagesPerTier[t])
-      moneyRow('COGS Total (incl. freight)', cogsTotal)
       const gpBefore = delivered.map((d, t) => d - cogsTotal[t])
-      moneyRowGP('Manufacturer GP ($) Before Trade', gpBefore)
-      pctRowGP('Manufacturer GP (%) Before Trade', gpBefore, netSells)
-
-      // TRADE SPEND sub-section
-      html += `<tr><td colspan="${tierCols}" class="subsection">TRADE SPEND</td></tr>`
-      moneyRow(`Distributor Trade Accrual (${ts.distributorTradeAccrual}%)`, netSells.map((n) => n * ts.distributorTradeAccrual / 100))
-      moneyRow(`Operator Trade Accrual (${ts.operatorTradeAccrual}%)`, netSells.map((n) => n * ts.operatorTradeAccrual / 100))
-      moneyRow(`Distributor Marketing Accrual (${ts.distributorMarketingAccrual}%)`, netSells.map((n) => n * ts.distributorMarketingAccrual / 100))
-      moneyRow(`Operator Marketing Accrual (${ts.operatorMarketingAccrual}%)`, netSells.map((n) => n * ts.operatorMarketingAccrual / 100))
-      moneyRow(`Deviated Billback (${ts.deviatedBillback}%)`, netSells.map((n) => n * ts.deviatedBillback / 100))
-      html += `<tr><td class="bold divider">Net Trade Total (${netTradePct.toFixed(1)}%)</td>`
-      netSells.forEach((n) => { html += `<td class="money bold divider">$${(n * netTradePct / 100).toFixed(2)}</td>` })
-      html += `</tr>`
-
-      // FINAL MARGIN sub-section
-      html += `<tr><td colspan="${tierCols}" class="subsection">FINAL MARGIN</td></tr>`
       const gpAfter = gpBefore.map((g, t) => g - netSells[t] * netTradePct / 100)
-      moneyRowGP('Manufacturer GP ($) After Trade', gpAfter)
-      pctRowGP('Manufacturer GP (%) After Trade', gpAfter, netSells)
 
-      // Blank row separator between SKUs
-      html += `<tr><td colspan="${tierCols}" class="empty">&nbsp;</td></tr>`
-    })
+      const rows: string[][] = []
 
-    // ═══════════════════════════════════════════
-    // TERMS & CONDITIONS
-    // ═══════════════════════════════════════════
-    html += `<tr><td colspan="${tierCols}" class="section">TERMS &amp; CONDITIONS</td></tr>`
+      // Helper: section header row spanning all 6 cells
+      const sectionRow = (text: string) => {
+        rows.push([`<td colspan="${blockCols}" class="header-sub" style="text-align:left;">${esc(text)}</td>`])
+      }
+      // Helper: subsection header row spanning all 6 cells
+      const subRow = (text: string) => {
+        rows.push([`<td colspan="${blockCols}" class="subsection">${esc(text)}</td>`])
+      }
+      // Helper: label + 5 tier values
+      const labelAndTiers = (label: string, cells: string[]) => {
+        rows.push([`<td class="bold">${esc(label)}</td>`, ...cells])
+      }
+      // Helper: blank row
+      const blankRow = () => {
+        rows.push(Array(blockCols).fill('<td class="empty">&nbsp;</td>'))
+      }
+      // Helper: money cell
+      const mc = (v: number, extra?: string) => {
+        const cls = extra ? `money ${extra}` : 'money'
+        return `<td class="${cls}">$${v.toFixed(2)}</td>`
+      }
+      // Helper: percent cell
+      const pc = (v: number, base: number, extra?: string) => {
+        const pctVal = base !== 0 ? (v / base * 100).toFixed(1) : '0.0'
+        const cls = extra ? `pct ${extra}` : 'pct'
+        return `<td class="${cls}">${pctVal}%</td>`
+      }
+      // Helper: GP money cell (colored)
+      const gpMc = (v: number) => {
+        const cls = v >= 0 ? 'pos' : 'neg'
+        return `<td class="money ${cls}">$${v.toFixed(2)}</td>`
+      }
+      // Helper: GP percent cell (colored)
+      const gpPc = (v: number, base: number) => {
+        const pctVal = base !== 0 ? (v / base * 100).toFixed(1) : '0.0'
+        const cls = v >= 0 ? 'pos' : 'neg'
+        return `<td class="pct ${cls}">${pctVal}%</td>`
+      }
 
-    const termsRow = (label: string, value: string) => {
-      html += `<tr><td class="label" style="width:200px;">${esc(label)}</td><td colspan="${tierCols - 1}">${esc(value)}</td></tr>`
+      // Row 1: SKU header
+      sectionRow(`SKU P&L: ${sku.productName}`)
+
+      // Row 2: Key Pricing / Manufacturer Inputs header
+      subRow('Key Pricing / Manufacturer Inputs:')
+
+      // Row 3: Base Price/Case
+      labelAndTiers('Base Price/Case', volFees.map(() => mc(basePrice, 'input')))
+
+      // Row 4: COGS ($/cs.)
+      labelAndTiers('COGS ($/cs.)', volFees.map(() => mc(pnl.cogsPerCase, 'input')))
+
+      // Row 5: blank
+      blankRow()
+
+      // Row 6: Bracketed / Volume Pricing header
+      subRow('Bracketed / Volume Pricing:')
+
+      // Row 7: Tier headers
+      rows.push([
+        '<td class="colheader">&nbsp;</td>',
+        ...Array.from({ length: 5 }, (_, i) => `<td class="colheader-c">Tier ${i + 1}</td>`)
+      ])
+
+      // Row 8: Tier descriptions
+      rows.push([
+        '<td class="colheader">&nbsp;</td>',
+        ...TIER_DESCRIPTIONS.map((d) => `<td class="colheader-c" style="font-size:8pt; font-weight:normal;">${esc(d)}</td>`)
+      ])
+
+      // Row 9: Base Price/Case across tiers
+      labelAndTiers('Base Price/Case', volFees.map(() => mc(basePrice)))
+
+      // Row 10: blank
+      blankRow()
+
+      // Row 11: Volume Based Fees (%)
+      labelAndTiers('Volume Based Fees (%)', volFees.map((v) => `<td class="right">${v}%</td>`))
+
+      // Row 12: Volume Based Fees ($)
+      labelAndTiers('Volume Based Fees ($)', volFees.map((v) => mc(basePrice * v / 100)))
+
+      // Row 13: blank
+      blankRow()
+
+      // Row 14: Net Sell Price
+      labelAndTiers('Net Sell Price', netSells.map((n) => mc(n)))
+
+      // Row 15: blank
+      blankRow()
+
+      // Row 16: Freight Charge
+      labelAndTiers('Freight Charge', pnl.freightPerTier.map((f) => mc(f, 'input')))
+
+      // Row 17: Lumpers Fee
+      labelAndTiers('Lumpers Fee', pnl.lumpersPerTier.map((l) => mc(l, 'input')))
+
+      // Row 18: Damages Fee
+      labelAndTiers('Damages Fee', pnl.damagesPerTier.map((d) => mc(d, 'input')))
+
+      // Row 19: blank
+      blankRow()
+
+      // Row 20: Delivered Sell Price
+      rows.push([
+        '<td class="bold divider">Delivered Sell Price</td>',
+        ...delivered.map((d) => `<td class="money bold divider">$${d.toFixed(2)}</td>`)
+      ])
+
+      // Row 21: blank
+      blankRow()
+
+      // Row 22: COGS
+      labelAndTiers('COGS', cogsTotal.map((c) => mc(c)))
+
+      // Row 23: Manufacturer GP ($) Before Trade
+      labelAndTiers('Manufacturer GP ($) Before Trade', gpBefore.map((g) => gpMc(g)))
+
+      // Row 24: Manufacturer GP (%) Before Trade
+      labelAndTiers('Manufacturer GP (%) Before Trade', gpBefore.map((g, i) => gpPc(g, netSells[i])))
+
+      // Row 25: blank
+      blankRow()
+
+      // Row 26: Trade Spend header
+      subRow(`Trade Spend: (${netTradePct.toFixed(1)}%)`)
+
+      // Row 27: Distributor Trade Accrual
+      labelAndTiers(`Distributor Trade Accrual (${ts.distributorTradeAccrual}%)`, netSells.map((n) => mc(n * ts.distributorTradeAccrual / 100)))
+
+      // Row 28: Operator Trade Accrual
+      labelAndTiers(`Operator Trade Accrual (${ts.operatorTradeAccrual}%)`, netSells.map((n) => mc(n * ts.operatorTradeAccrual / 100)))
+
+      // Row 29: Distributor Marketing Accrual
+      labelAndTiers(`Distributor Marketing Accrual (${ts.distributorMarketingAccrual}%)`, netSells.map((n) => mc(n * ts.distributorMarketingAccrual / 100)))
+
+      // Row 30: Operator Marketing Accrual
+      labelAndTiers(`Operator Marketing Accrual (${ts.operatorMarketingAccrual}%)`, netSells.map((n) => mc(n * ts.operatorMarketingAccrual / 100)))
+
+      // Row 31: Deviated Billback
+      labelAndTiers(`Deviated Billback (${ts.deviatedBillback}%)`, netSells.map((n) => mc(n * ts.deviatedBillback / 100)))
+
+      // Row 32: blank
+      blankRow()
+
+      // Row 33: Net Trade Total
+      rows.push([
+        `<td class="bold divider">Net Trade Total (${netTradePct.toFixed(1)}%)</td>`,
+        ...netSells.map((n) => `<td class="money bold divider">$${(n * netTradePct / 100).toFixed(2)}</td>`)
+      ])
+
+      // Row 34: blank
+      blankRow()
+
+      // Row 35: Manufacturer GP ($) After Trade
+      labelAndTiers('Manufacturer GP ($) After Trade', gpAfter.map((g) => gpMc(g)))
+
+      // Row 36: Manufacturer GP (%) After Trade
+      labelAndTiers('Manufacturer GP (%) After Trade', gpAfter.map((g, i) => gpPc(g, netSells[i])))
+
+      return rows
     }
 
+    // Build all P&L blocks
+    const blocks = skus.map((_, i) => buildPnlBlock(i))
+
+    // Render blocks side by side, 2 per row group
+    for (let i = 0; i < blocks.length; i += 2) {
+      const left = blocks[i]
+      const right = blocks[i + 1] // may be undefined
+      const maxRows = Math.max(left.length, right?.length || 0)
+
+      for (let r = 0; r < maxRows; r++) {
+        const leftRow = left[r]
+        const rightRow = right?.[r]
+
+        html += '<tr>'
+
+        // Left block
+        if (leftRow) {
+          if (leftRow.length === 1) {
+            // colspan row - already contains the full td with colspan
+            html += leftRow[0]
+          } else {
+            html += leftRow.join('')
+          }
+        } else {
+          html += Array(blockCols).fill('<td class="empty">&nbsp;</td>').join('')
+        }
+
+        // Spacer column
+        html += '<td class="empty">&nbsp;</td>'
+
+        // Right block
+        if (rightRow) {
+          if (rightRow.length === 1) {
+            html += rightRow[0]
+          } else {
+            html += rightRow.join('')
+          }
+        } else {
+          html += Array(blockCols).fill('<td class="empty">&nbsp;</td>').join('')
+        }
+
+        html += '</tr>'
+      }
+
+      // Blank row between row groups
+      html += `<tr><td colspan="${totalCols}" class="empty">&nbsp;</td></tr>`
+    }
+
+    // ═══════════════════════════════════════════
+    // SECTION 5: TERMS & CONDITIONS (two-column layout)
+    // ═══════════════════════════════════════════
+    html += `<tr><td colspan="${totalCols}" class="section">TERMS &amp; CONDITIONS</td></tr>`
+
+    // Build left terms (Warehouse + Remit Invoice + Shelf Life)
+    const leftTerms: string[][] = []
     // Warehouses
     companyInfo.plantsWarehouses?.forEach((w) => {
-      html += `<tr><td colspan="${tierCols}" class="colheader">WAREHOUSE</td></tr>`
-      termsRow('Name', w.name || '')
-      termsRow('Address', `${w.street || ''}, ${w.city || ''}, ${w.state || ''} ${w.zipCode || ''}`)
-      termsRow('Third-Party Warehouse', w.isThirdPartyWarehouse === 'yes' ? 'Yes' : 'No')
+      leftTerms.push([`<td colspan="6" class="colheader">WAREHOUSE</td>`])
+      leftTerms.push([`<td class="label">Name</td>`, `<td colspan="5">${esc(w.name || '')}</td>`])
+      leftTerms.push([`<td class="label">Address</td>`, `<td colspan="5">${esc(`${w.street || ''}, ${w.city || ''}, ${w.state || ''} ${w.zipCode || ''}`)}</td>`])
+      leftTerms.push([`<td class="label">Third-Party</td>`, `<td colspan="5">${w.isThirdPartyWarehouse === 'yes' ? 'Yes' : 'No'}</td>`])
     })
-
     // Remit Invoice To
     if (termsData.remitCompanyName) {
-      html += `<tr><td colspan="${tierCols}" class="colheader">REMIT INVOICE TO</td></tr>`
-      termsRow('Company', termsData.remitCompanyName)
-      termsRow('Address', `${termsData.remitStreet || ''}, ${termsData.remitCity || ''}, ${termsData.remitState || ''} ${termsData.remitZip || ''}`)
+      leftTerms.push([`<td colspan="6" class="colheader">REMIT INVOICE TO</td>`])
+      leftTerms.push([`<td class="label">Company</td>`, `<td colspan="5">${esc(termsData.remitCompanyName)}</td>`])
+      leftTerms.push([`<td class="label">Address</td>`, `<td colspan="5">${esc(`${termsData.remitStreet || ''}, ${termsData.remitCity || ''}, ${termsData.remitState || ''} ${termsData.remitZip || ''}`)}</td>`])
     }
-
     // Shelf Life
     const shelfLives = [...new Set(skus.map((s) => s.shelfLife).filter(Boolean))]
     if (shelfLives.length > 0) {
-      html += `<tr><td colspan="${tierCols}" class="colheader">SHELF LIFE</td></tr>`
-      shelfLives.forEach((sl) => termsRow('Duration', `${sl} from Manufacture`))
-      if (termsData.lotCodeFormat) termsRow('Lot Code Format', termsData.lotCodeFormat)
+      leftTerms.push([`<td colspan="6" class="colheader">SHELF LIFE</td>`])
+      shelfLives.forEach((sl) => leftTerms.push([`<td class="label">Duration</td>`, `<td colspan="5">${esc(String(sl))} from Manufacture</td>`]))
+      if (termsData.lotCodeFormat) leftTerms.push([`<td class="label">Lot Code Format</td>`, `<td colspan="5">${esc(termsData.lotCodeFormat)}</td>`])
     }
 
-    // Terms of Sale
-    html += `<tr><td colspan="${tierCols}" class="colheader">TERMS OF SALE</td></tr>`
-    termsRow('1. Minimum Order', termsData.minimumOrder || 'N/A')
-    termsRow('2. Pricing', 'Delivered Pricing')
-    termsRow('3. Transportation', termsData.transportation || 'N/A')
-    termsRow('4. Payment Terms', termsData.paymentTerms || 'N/A')
-    termsRow('5. Lead Time', termsData.leadTime || 'N/A')
-    termsRow('6. POs should be sent to', termsData.poEmail || 'N/A')
+    // Build right terms (Terms of Sale 1-7)
+    const rightTerms: string[][] = []
+    rightTerms.push([`<td colspan="6" class="colheader">TERMS OF SALE</td>`])
+    const termsItems: [string, string][] = [
+      ['1. Minimum Order', termsData.minimumOrder || 'N/A'],
+      ['2. Pricing', 'Delivered Pricing'],
+      ['3. Transportation', termsData.transportation || 'N/A'],
+      ['4. Payment Terms', termsData.paymentTerms || 'N/A'],
+      ['5. Lead Time', termsData.leadTime || 'N/A'],
+      ['6. POs should be sent to', termsData.poEmail || 'N/A'],
+    ]
     if (termsData.hasCustomerPickup === 'yes') {
-      termsRow('7. Customer Pickup Allowances', termsData.customerPickupAllowances || 'N/A')
+      termsItems.push(['7. Customer Pickup Allowances', termsData.customerPickupAllowances || 'N/A'])
+    }
+    termsItems.forEach(([label, value]) => {
+      rightTerms.push([`<td class="label">${esc(label)}</td>`, `<td colspan="5">${esc(value)}</td>`])
+    })
+
+    // Combine left and right terms side by side
+    const maxTermRows = Math.max(leftTerms.length, rightTerms.length)
+    for (let r = 0; r < maxTermRows; r++) {
+      const leftRow = leftTerms[r]
+      const rightRow = rightTerms[r]
+
+      html += '<tr>'
+
+      // Left side (cols 1-6)
+      if (leftRow) {
+        html += leftRow.join('')
+      } else {
+        html += Array(6).fill('<td class="empty">&nbsp;</td>').join('')
+      }
+
+      // Spacer (col 7)
+      html += '<td class="empty">&nbsp;</td>'
+
+      // Right side (cols 8-13)
+      if (rightRow) {
+        html += rightRow.join('')
+      } else {
+        html += Array(6).fill('<td class="empty">&nbsp;</td>').join('')
+      }
+
+      html += '</tr>'
     }
 
     // Blank row
-    html += `<tr><td colspan="${tierCols}" class="empty">&nbsp;</td></tr>`
+    html += `<tr><td colspan="${totalCols}" class="empty">&nbsp;</td></tr>`
 
     // Footer
-    html += `<tr><td colspan="${tierCols}" style="text-align:center; font-size:9pt; color:#666; border:none; font-style:italic;">Confidential and proprietary. Internal business use only unless otherwise authorized by Elohi.</td></tr>`
+    html += `<tr><td colspan="${totalCols}" style="text-align:center; font-size:9pt; color:#666; border:none; font-style:italic;">Confidential and proprietary. Internal business use only unless otherwise authorized by Elohi.</td></tr>`
 
     html += `</table></body></html>`
 
