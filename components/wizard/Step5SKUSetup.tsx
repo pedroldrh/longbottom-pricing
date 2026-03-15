@@ -3,6 +3,7 @@
 import { useState } from "react"
 import type { SKUInput } from "@/lib/types"
 import { Trash2, Check } from 'lucide-react'
+import CustomSelect from "@/components/CustomSelect"
 
 interface Step5Props {
   skus: SKUInput[]
@@ -273,15 +274,15 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Temperature Class</label>
-                <select
+                <CustomSelect
                   value={sku.temperatureClass}
-                  onChange={(e) => updateSKU(index, { ...sku, temperatureClass: e.target.value as any })}
-                  className="mt-1 block w-full sm:text-sm px-3 py-2 border"
-                >
-                  <option value="shelf">Shelf</option>
-                  <option value="refrigerated">Refrigerated</option>
-                  <option value="frozen">Frozen</option>
-                </select>
+                  onChange={(val) => updateSKU(index, { ...sku, temperatureClass: val as any })}
+                  options={[
+                    { value: "shelf", label: "Shelf" },
+                    { value: "refrigerated", label: "Refrigerated" },
+                    { value: "frozen", label: "Frozen" },
+                  ]}
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Shelf Life</label>
