@@ -9,7 +9,7 @@ export default function CalculatorPage() {
         boxShadow: '0 1px 8px rgba(57, 48, 137, 0.04)',
       }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <img src="/elohi-logo.png" alt="Elohi" className="h-10 w-10 rounded-full" />
+          <img src="/elohi-logo.png" alt="Elohi" className="h-14 w-14" />
           <div>
             <h1 className="text-2xl font-bold" style={{
               fontFamily: 'var(--font-heading), Fraunces, serif',
@@ -22,7 +22,7 @@ export default function CalculatorPage() {
             <div style={{
               marginTop: '6px',
               height: '2px',
-              width: '60px',
+              width: '100%',
               background: 'linear-gradient(90deg, var(--lux-primary), var(--lux-accent))',
               borderRadius: '2px',
             }} />

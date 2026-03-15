@@ -20,7 +20,7 @@ export default function LoginPage() {
       }}>
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <img src="/elohi-logo.png" alt="Elohi" className="h-16 w-16 rounded-full" />
+            <img src="/elohi-logo.png" alt="Elohi" className="h-20 w-20" />
           </div>
           <h2 className="text-3xl font-bold" style={{
             fontFamily: 'var(--font-heading), Fraunces, serif',
