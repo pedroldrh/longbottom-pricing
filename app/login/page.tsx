@@ -23,7 +23,7 @@ export default function LoginPage() {
             <img src="/elohi-logo.png" alt="Elohi" className="h-20 w-20" />
           </div>
           <h2 className="text-3xl font-bold" style={{
-            fontFamily: 'var(--font-heading), Fraunces, serif',
+            fontFamily: 'Frank New, var(--font-heading), sans-serif',
             color: 'var(--text-primary)',
             fontWeight: 700,
           }}>
@@ -34,7 +34,7 @@ export default function LoginPage() {
             <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--lux-primary)' }} />
             <div style={{ height: '1px', width: '60px', background: 'var(--lux-primary)' }} />
           </div>
-          <p className="mt-4 text-sm" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body), DM Sans, sans-serif' }}>
+          <p className="mt-4 text-sm" style={{ color: 'var(--text-secondary)', fontFamily: 'Bilo, var(--font-body), sans-serif' }}>
             Enter password to access calculator
           </p>
           <p className="mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>

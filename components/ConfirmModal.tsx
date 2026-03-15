@@ -94,7 +94,7 @@ export default function ConfirmModal({
           <h3
             className="text-lg font-bold text-center mb-2"
             style={{
-              fontFamily: "var(--font-heading), Fraunces, serif",
+              fontFamily: "Frank New, var(--font-heading), sans-serif",
               color: "var(--text-primary)",
             }}
           >

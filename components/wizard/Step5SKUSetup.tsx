@@ -37,7 +37,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
   }
 
   const addSKU = () => {
-    onChange([...skus, { ...emptySKU }])
+    onChange([{ ...emptySKU }, ...skus])
   }
 
   const updateSKU = (index: number, updatedSKU: SKUInput) => {

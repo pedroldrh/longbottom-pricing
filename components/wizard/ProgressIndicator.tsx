@@ -84,7 +84,7 @@ export default function ProgressIndicator({
                             color: '#fff',
                             boxShadow: '0 4px 14px rgba(57, 48, 137, 0.25)',
                             transform: 'scale(1.1)',
-                            fontFamily: 'var(--font-heading), Fraunces, serif',
+                            fontFamily: 'Frank New, var(--font-heading), sans-serif',
                             fontSize: '13px',
                             fontWeight: 700,
                           }
@@ -100,7 +100,7 @@ export default function ProgressIndicator({
                               background: 'var(--bg-cream)',
                               color: 'var(--text-muted)',
                               border: '2px solid var(--border-accent)',
-                              fontFamily: 'var(--font-heading), Fraunces, serif',
+                              fontFamily: 'Frank New, var(--font-heading), sans-serif',
                               fontSize: '13px',
                               fontWeight: 600,
                             }
@@ -120,7 +120,7 @@ export default function ProgressIndicator({
                 <span
                   className="mt-2.5 text-[11px] leading-tight text-center max-w-[90px] transition-colors duration-200"
                   style={{
-                    fontFamily: 'var(--font-body), DM Sans, sans-serif',
+                    fontFamily: 'Bilo, var(--font-body), sans-serif',
                     fontWeight: isActive ? 600 : (isCompleted || isPast) ? 500 : 400,
                     color: isActive
                       ? 'var(--lux-primary)'

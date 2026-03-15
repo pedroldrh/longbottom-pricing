@@ -2,7 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Removed Tailwind v4-specific @theme inline and @custom-variant directives */
+/* Elohi brand fonts */
+@font-face {
+  font-family: 'Frank New';
+  src: url('/fonts/frank-bold.woff2') format('woff2'),
+       url('/fonts/frank-bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bilo';
+  src: url('/fonts/bilo-regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 @layer base {
   :root {
@@ -105,13 +121,14 @@
   }
   body {
     background-color: var(--bg-cream);
-    font-family: var(--font-body), 'DM Sans', sans-serif;
+    font-family: 'Bilo', var(--font-body), sans-serif;
     color: var(--text-primary);
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   h1, h2, h3 {
-    font-family: var(--font-heading), 'Fraunces', serif;
+    font-family: 'Frank New', var(--font-heading), sans-serif;
+    font-weight: 700;
   }
 
   input[type="number"]::-webkit-outer-spin-button,
@@ -185,7 +202,7 @@ table {
 }
 
 th {
-  font-family: var(--font-body), 'DM Sans', sans-serif;
+  font-family: 'Bilo', var(--font-body), sans-serif;
   font-weight: 600;
   letter-spacing: 0.02em;
 }

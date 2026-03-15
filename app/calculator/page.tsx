@@ -12,7 +12,7 @@ export default function CalculatorPage() {
           <img src="/elohi-logo.png" alt="Elohi" className="h-14 w-14" />
           <div>
             <h1 className="text-2xl font-bold" style={{
-              fontFamily: 'var(--font-heading), Fraunces, serif',
+              fontFamily: 'Frank New, var(--font-heading), sans-serif',
               color: 'var(--text-primary)',
               fontWeight: 700,
               letterSpacing: '-0.01em',

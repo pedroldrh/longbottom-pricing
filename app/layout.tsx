@@ -1,20 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { DM_Sans, Fraunces } from "next/font/google"
 import SiteFooter from "@/components/SiteFooter"
 import "./globals.css"
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-body",
-  weight: ["400", "500", "600", "700"],
-})
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-heading",
-  weight: ["600", "700"],
-})
 
 export const metadata: Metadata = {
   title: "Elohi Pricing Calculator",
@@ -32,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${dmSans.variable} ${fraunces.variable} min-h-screen`}>
+      <body className="min-h-screen">
         <div className="flex min-h-screen flex-col">
           <main className="flex-1">{children}</main>
           <SiteFooter />

@@ -533,7 +533,7 @@ export default function CalculatorForm() {
           Previous
         </button>
 
-        <div className="text-sm" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-heading), Fraunces, serif' }}>
+        <div className="text-sm" style={{ color: 'var(--text-secondary)', fontFamily: 'Frank New, var(--font-heading), sans-serif' }}>
           Step {currentStep} of {STEPS.length}
         </div>
 
