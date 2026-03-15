@@ -205,13 +205,19 @@ export default function Step6Results({
 
       const rows: string[][] = []
 
-      // Helper: section header row spanning all 6 cells
+      // Helper: section header row — label in first cell, rest are styled the same
       const sectionRow = (text: string) => {
-        rows.push([`<td colspan="${blockCols}" class="header-sub" style="text-align:left;">${esc(text)}</td>`])
+        rows.push([
+          `<td class="header-sub" style="text-align:left;">${esc(text)}</td>`,
+          ...Array(blockCols - 1).fill('<td class="header-sub">&nbsp;</td>')
+        ])
       }
-      // Helper: subsection header row spanning all 6 cells
+      // Helper: subsection header row — label in first cell, rest styled the same
       const subRow = (text: string) => {
-        rows.push([`<td colspan="${blockCols}" class="subsection">${esc(text)}</td>`])
+        rows.push([
+          `<td class="subsection">${esc(text)}</td>`,
+          ...Array(blockCols - 1).fill('<td class="subsection">&nbsp;</td>')
+        ])
       }
       // Helper: label + 5 tier values
       const labelAndTiers = (label: string, cells: string[]) => {
@@ -382,14 +388,9 @@ export default function Step6Results({
 
         html += '<tr>'
 
-        // Left block
+        // Left block (always 6 cells)
         if (leftRow) {
-          if (leftRow.length === 1) {
-            // colspan row - already contains the full td with colspan
-            html += leftRow[0]
-          } else {
-            html += leftRow.join('')
-          }
+          html += leftRow.join('')
         } else {
           html += Array(blockCols).fill('<td class="empty">&nbsp;</td>').join('')
         }
@@ -397,13 +398,9 @@ export default function Step6Results({
         // Spacer column
         html += '<td class="empty">&nbsp;</td>'
 
-        // Right block
+        // Right block (always 6 cells)
         if (rightRow) {
-          if (rightRow.length === 1) {
-            html += rightRow[0]
-          } else {
-            html += rightRow.join('')
-          }
+          html += rightRow.join('')
         } else {
           html += Array(blockCols).fill('<td class="empty">&nbsp;</td>').join('')
         }
