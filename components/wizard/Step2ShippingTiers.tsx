@@ -42,7 +42,7 @@ export default function Step2ShippingTiers({ data, onChange }: Step2Props) {
               <p className="text-sm text-gray-600">{tier.label}</p>
             </div>
             <div className="w-36">
-              <label className="block text-xs text-gray-600 mb-1">Volume fee per case ($)</label>
+              <label className="block text-xs text-gray-600 mb-1">Volume fee (%)</label>
               <input
                 type="number"
                 step="0.01"

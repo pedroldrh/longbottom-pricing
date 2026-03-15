@@ -9,12 +9,10 @@ export interface FreightRateConfig {
 }
 
 export const SKUInputSchema = z.object({
-  vendorItemNumber: z.string().optional().default(""),
   productName: z.string().min(1, "Product name is required"),
   caseUPC: z.string().optional().default(""),
   temperatureClass: TemperatureClassSchema,
   shelfLife: z.string().optional().default(""),
-  transportation: z.string().optional().default(""),
   lbsPerUnit: z.number().positive("Must be greater than 0"),
   unitsPerCase: z.number().int().min(1, "Must be at least 1"),
   caseSize: z.string().optional().default(""),
@@ -24,45 +22,9 @@ export const SKUInputSchema = z.object({
   casesPerPallet: z.number().int().min(0).optional().default(0),
   palletTI: z.number().int().min(0).optional().default(0),
   palletHI: z.number().int().min(0).optional().default(0),
-  basePricePerCase: z.number().min(0, "Must be non-negative"),
-  cogsPerLb: z.number().min(0, "Must be non-negative"),
-})
-
-export const SettingsSchema = z.object({
-  tierLabels: z.array(z.string()).length(5),
-  volumeFeePct: z.array(z.number().min(0)).length(5),
-  freightPerLb: z.object({
-    shelf: z.object({
-      useDefaultRate: z.boolean(),
-      ratePerLb: z.number().min(0),
-    }),
-    refrigerated: z.object({
-      useDefaultRate: z.boolean(),
-      ratePerLb: z.number().min(0),
-    }),
-    frozen: z.object({
-      useDefaultRate: z.boolean(),
-      ratePerLb: z.number().min(0),
-    }),
-  }),
-  tradeSpendPct: z.number().min(0).max(100),
-  accrualPct: z.object({
-    distributor: z.number().min(0),
-    operator: z.number().min(0),
-    baseMarketing: z.number().min(0),
-    additionalMarketing: z.number().min(0),
-    deviatedBillback: z.number().min(0),
-  }),
-})
-
-export const CalculationInputSchema = z.object({
-  sku: SKUInputSchema,
-  settings: SettingsSchema,
 })
 
 export type SKUInput = z.infer<typeof SKUInputSchema>
-export type Settings = z.infer<typeof SettingsSchema>
-export type CalculationInput = z.infer<typeof CalculationInputSchema>
 
 export interface TierResult {
   tierLabel: string

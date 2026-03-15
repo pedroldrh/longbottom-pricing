@@ -10,12 +10,10 @@ interface Step5Props {
 }
 
 const emptySKU: SKUInput = {
-  vendorItemNumber: "",
   productName: "",
   caseUPC: "",
   temperatureClass: "shelf",
   shelfLife: "",
-  transportation: "",
   lbsPerUnit: 0,
   unitsPerCase: 1,
   caseSize: "",
@@ -25,8 +23,6 @@ const emptySKU: SKUInput = {
   casesPerPallet: 0,
   palletTI: 0,
   palletHI: 0,
-  basePricePerCase: 0,
-  cogsPerLb: 0,
 }
 
 export default function Step5SKUSetup({ skus, onChange }: Step5Props) {

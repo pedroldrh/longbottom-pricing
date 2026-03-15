@@ -1,15 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { calculatePricing } from "@/app/actions"
-import type { PricingResult, SKUInput, SKUPnLInputs, Settings, CompanyInfo, TermsConditions } from "@/lib/types"
-import SettingsPanel from "./SettingsPanel"
-import ResultsTable from "./ResultsTable"
-import defaults from "@/config/defaults.json"
+import type { SKUInput, SKUPnLInputs, CompanyInfo, TermsConditions } from "@/lib/types"
 import ProgressIndicator from "./wizard/ProgressIndicator"
 import Step1CompanyInfo from "./wizard/Step1CompanyInfo"
 import Step2ShippingTiers from "./wizard/Step2ShippingTiers"
-import Step3FreightRates from "./wizard/Step3FreightRates"
 import Step4TradeSpend, { type TradeSpendData } from "./wizard/Step4TradeSpend"
 import Step5PlantsWarehouses from "./wizard/Step5PlantsWarehouses"
 import Step5SKUSetup from "./wizard/Step5SKUSetup"
@@ -32,7 +27,6 @@ const STORAGE_KEYS = {
   CURRENT_STEP: "pricing_calculator_current_step",
   COMPANY_INFO: "pricing_calculator_company_info",
   SHIPPING_DATA: "pricing_calculator_shipping_data",
-  FREIGHT_DATA: "pricing_calculator_freight_data",
   TRADE_SPEND_DATA: "pricing_calculator_trade_spend_data",
   SKUS: "pricing_calculator_skus",
   TERMS_DATA: "pricing_calculator_terms_data",
@@ -47,7 +41,7 @@ export default function CalculatorForm() {
     }
     return 1
   })
-  
+
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(STORAGE_KEYS.COMPANY_INFO)
@@ -111,26 +105,6 @@ export default function CalculatorForm() {
     }
   })
 
-  const [freightData, setFreightData] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem(STORAGE_KEYS.FREIGHT_DATA)
-      if (saved) {
-        try {
-          return JSON.parse(saved)
-        } catch (e) {
-          console.error("Failed to parse freight data from localStorage", e)
-        }
-      }
-    }
-    return {
-      freightPerLb: {
-        shelf: { useDefaultRate: true, ratePerLb: 0.25 },
-        refrigerated: { useDefaultRate: true, ratePerLb: 0.35 },
-        frozen: { useDefaultRate: true, ratePerLb: 0.45 },
-      },
-    }
-  })
-
   const [tradeSpendData, setTradeSpendData] = useState<TradeSpendData>(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(STORAGE_KEYS.TRADE_SPEND_DATA)
@@ -170,12 +144,10 @@ export default function CalculatorForm() {
           const parsed = JSON.parse(saved)
           return Array.isArray(parsed)
             ? parsed.map((sku: any) => ({
-                vendorItemNumber: sku.vendorItemNumber ?? "",
                 productName: sku.productName ?? "",
                 caseUPC: sku.caseUPC ?? "",
                 temperatureClass: sku.temperatureClass ?? "shelf",
                 shelfLife: sku.shelfLife ?? "",
-                transportation: sku.transportation ?? "",
                 lbsPerUnit: sku.lbsPerUnit ?? 0,
                 unitsPerCase: sku.unitsPerCase ?? 1,
                 caseSize: sku.caseSize ?? "",
@@ -185,8 +157,6 @@ export default function CalculatorForm() {
                 casesPerPallet: sku.casesPerPallet ?? 0,
                 palletTI: sku.palletTI ?? 0,
                 palletHI: sku.palletHI ?? 0,
-                basePricePerCase: sku.basePricePerCase ?? 0,
-                cogsPerLb: sku.cogsPerLb ?? 0,
               }))
             : []
         } catch (e) {
@@ -240,9 +210,6 @@ export default function CalculatorForm() {
     return emptyTerms
   })
 
-  const [results, setResults] = useState<PricingResult[]>([])
-  const [isCalculating, setIsCalculating] = useState(false)
-
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.CURRENT_STEP, currentStep.toString())
   }, [currentStep])
@@ -254,10 +221,6 @@ export default function CalculatorForm() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.SHIPPING_DATA, JSON.stringify(shippingData))
   }, [shippingData])
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.FREIGHT_DATA, JSON.stringify(freightData))
-  }, [freightData])
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.TRADE_SPEND_DATA, JSON.stringify(tradeSpendData))
@@ -285,42 +248,6 @@ export default function CalculatorForm() {
       return prev.slice(0, skus.length)
     })
   }, [skus.length])
-
-  const handleCalculate = async () => {
-    setIsCalculating(true)
-
-    try {
-      const tradeSpendPct =
-        tradeSpendData.distributorTradeAccrual +
-        tradeSpendData.operatorTradeAccrual +
-        tradeSpendData.distributorMarketingAccrual +
-        tradeSpendData.operatorMarketingAccrual +
-        tradeSpendData.deviatedBillback
-
-      const settings: Settings = {
-        tierLabels: shippingData.tierLabels,
-        volumeFeePct: shippingData.volumeFeePerCase,
-        freightPerLb: freightData.freightPerLb,
-        tradeSpendPct,
-        accrualPct: {
-          distributor: tradeSpendData.distributorTradeAccrual / 100,
-          operator: tradeSpendData.operatorTradeAccrual / 100,
-          baseMarketing: tradeSpendData.distributorMarketingAccrual / 100,
-          additionalMarketing: tradeSpendData.operatorMarketingAccrual / 100,
-          deviatedBillback: tradeSpendData.deviatedBillback / 100,
-        },
-      }
-
-      const calculationResults = await Promise.all(
-        skus.map((sku) => calculatePricing({ sku, settings }))
-      )
-      setResults(calculationResults)
-    } catch (error) {
-      console.error("Calculation error:", error)
-    } finally {
-      setIsCalculating(false)
-    }
-  }
 
   const nextStep = () => {
     if (currentStep < STEPS.length) {
@@ -361,13 +288,6 @@ export default function CalculatorForm() {
         ],
         volumeFeePerCase: [0, 2, 4, 8, 12],
       })
-      setFreightData({
-        freightPerLb: {
-          shelf: { useDefaultRate: true, ratePerLb: 0.25 },
-          refrigerated: { useDefaultRate: true, ratePerLb: 0.35 },
-          frozen: { useDefaultRate: true, ratePerLb: 0.45 },
-        },
-      })
       setTradeSpendData({
         distributorTradeAccrual: 10,
         operatorTradeAccrual: 6,
@@ -378,51 +298,9 @@ export default function CalculatorForm() {
       setSkus([])
       setPnlInputs([])
       setTermsData(emptyTerms)
-      setResults([])
     }
   }
 
-  const isValidDate = (value: string) => /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/.test(value.trim())
-
-  const isCompanyInfoComplete = isValidDate(companyInfo.effectiveDate) && companyInfo.companyName.trim().length > 0
-
-  const isSkuComplete = (sku: SKUInput) =>
-    sku.productName.trim().length > 0 &&
-    sku.shelfLife.trim().length > 0 &&
-    sku.transportation.trim().length > 0 &&
-    sku.lbsPerUnit > 0 &&
-    sku.unitsPerCase > 0 &&
-    sku.basePricePerCase > 0 &&
-    sku.cogsPerLb > 0
-
-  const isProductSetupComplete = skus.length > 0 && skus.every(isSkuComplete)
-  const isTradeSpendComplete =
-    tradeSpendData.distributorTradeAccrual +
-    tradeSpendData.operatorTradeAccrual +
-    tradeSpendData.distributorMarketingAccrual +
-    tradeSpendData.operatorMarketingAccrual +
-    tradeSpendData.deviatedBillback > 0
-  const isShippingTiersComplete =
-    shippingData.volumeFeePerCase.length === 5 &&
-    shippingData.volumeFeePerCase.every((fee) => Number.isFinite(fee) && fee >= 0)
-  const isPlantsWarehousesComplete =
-    companyInfo.plantsWarehouses.length > 0 &&
-    companyInfo.plantsWarehouses.every(
-      (plant) =>
-        plant.name.trim().length > 0 &&
-        plant.street.trim().length > 0 &&
-        plant.city.trim().length > 0 &&
-        plant.state.trim().length > 0 &&
-        plant.zipCode.trim().length > 0 &&
-        plant.isThirdPartyWarehouse !== ""
-    )
-  const isFreightComplete = Object.values(freightData.freightPerLb).every(
-    (config) => Number.isFinite(config.ratePerLb) && config.ratePerLb >= 0
-  )
-  const isTermsComplete = currentStep > 7
-  const isFinalOutputComplete = results.length > 0
-
-  // A step is "completed" only if the user has moved past it
   // A step is "completed" only if the user has moved past it
   const completedSteps = STEPS.map((_, index) => index + 1 < currentStep)
 
@@ -469,7 +347,7 @@ export default function CalculatorForm() {
         />
       )}
       {currentStep === 8 && (
-        <Step6Results skus={skus} results={results} onCalculate={handleCalculate} isCalculating={isCalculating} />
+        <Step6Results skus={skus} />
       )}
 
       {/* Navigation Buttons */}

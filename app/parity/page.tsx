@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { calculatePricing } from "@/app/actions"
+// Old pricing engine (calculatePricing) has been removed.
+// This parity testing page is no longer functional.
 
 interface Fixture {
   name: string
@@ -43,73 +44,8 @@ export default function ParityPage() {
   const [error, setError] = useState("")
 
   const handleTest = async () => {
-    setError("")
+    setError("Parity testing is disabled. The old pricing engine has been removed. All calculations now live in Step6SKUPnL.")
     setResults([])
-
-    try {
-      const fixtures: Fixture[] = JSON.parse(fixturesJson)
-      const testResults = []
-
-      for (const fixture of fixtures) {
-        const calculated = await calculatePricing({
-          sku: {
-            productName: fixture.name,
-            temperatureClass: fixture.temperatureClass,
-            lbsPerUnit: fixture.lbsPerUnit,
-            unitsPerCase: fixture.unitsPerCase,
-            basePricePerCase: fixture.basePricePerCase,
-            cogsPerLb: fixture.cogsPerLb,
-          },
-          settings: {
-            tierLabels: ["T1", "T2", "T3", "T4"],
-            volumeFeePct: fixture.volumeFeePct,
-            freightPerLb: fixture.freightPerLb,
-            accrualPct: fixture.accrualPct,
-          },
-        })
-
-        const mismatches = []
-
-        for (let i = 0; i < 4; i++) {
-          const exp = fixture.expected.tiers[i]
-          const calc = calculated.tiers[i]
-
-          const checks = [
-            { name: "Net Sell W/O", exp: exp.netSellWO, calc: calc.netSellWODelivery, threshold: 0.01 },
-            { name: "Freight", exp: exp.freight, calc: calc.freight, threshold: 0.01 },
-            { name: "Delivered", exp: exp.delivered, calc: calc.deliveredPrice, threshold: 0.01 },
-            { name: "GP Before $", exp: exp.gpBefore$, calc: calc.gpBeforeTrade, threshold: 0.01 },
-            { name: "GP Before %", exp: exp.gpBeforePct, calc: calc.gpBeforeTradePct, threshold: 0.0001 },
-            { name: "Total Accruals", exp: exp.totalAccruals$, calc: calc.accruals.total, threshold: 0.01 },
-            { name: "GP After $", exp: exp.gpAfter$, calc: calc.gpAfterTrade, threshold: 0.01 },
-            { name: "GP After %", exp: exp.gpAfterPct, calc: calc.gpAfterTradePct, threshold: 0.0001 },
-          ]
-
-          for (const check of checks) {
-            const diff = Math.abs(check.exp - check.calc)
-            if (diff > check.threshold) {
-              mismatches.push({
-                tier: i + 1,
-                metric: check.name,
-                expected: check.exp,
-                calculated: check.calc,
-                diff,
-              })
-            }
-          }
-        }
-
-        testResults.push({
-          name: fixture.name,
-          passed: mismatches.length === 0,
-          mismatches,
-        })
-      }
-
-      setResults(testResults)
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to parse fixtures")
-    }
   }
 
   const exportMismatches = () => {
