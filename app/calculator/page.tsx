@@ -8,10 +8,10 @@ export default function CalculatorPage() {
         borderBottom: '1px solid var(--lux-border)',
         boxShadow: '0 1px 8px rgba(57, 48, 137, 0.04)',
       }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-5">
-          <img src="/elohi-logo.png" alt="Elohi" className="h-24 w-24" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-3">
+          <img src="/elohi-logo.png" alt="Elohi" className="h-12 w-12" />
           <div>
-            <h1 className="text-2xl font-bold" style={{
+            <h1 className="text-xl font-bold" style={{
               fontFamily: 'Frank New, var(--font-heading), sans-serif',
               color: 'var(--text-primary)',
               fontWeight: 700,

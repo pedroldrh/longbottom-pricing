@@ -180,7 +180,19 @@ input:focus, select:focus, textarea:focus {
   background: var(--yellow-input) !important;
 }
 
-/* Button refinements */
+/* Button refinements & animations */
+button {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+button:not(:disabled):hover {
+  box-shadow: 0 2px 8px rgba(57, 48, 137, 0.1);
+}
+
 .bg-blue-600 {
   background: var(--lux-primary) !important;
 }
