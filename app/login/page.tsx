@@ -12,7 +12,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8 p-10" style={{
         background: 'var(--bg-card)',
         borderRadius: '16px',
-        boxShadow: '0 4px 24px rgba(26, 58, 45, 0.08), 0 1px 4px rgba(26, 58, 45, 0.04)',
+        boxShadow: '0 4px 24px rgba(57, 48, 137, 0.08), 0 1px 4px rgba(57, 48, 137, 0.04)',
         borderTop: '4px solid var(--lux-accent)',
         border: '1px solid var(--lux-border)',
         borderTopColor: 'var(--lux-accent)',

@@ -40,21 +40,27 @@
     --sidebar-border: 0 0% 92.2%;
     --sidebar-ring: 0 0% 70.8%;
 
-    /* Luxury design system */
-    --bg-cream: #FAF7F2;
+    /* Elohi brand design system */
+    --bg-cream: #FFFAF5;
     --bg-card: #FFFFFF;
-    --lux-primary: #1B3A2D;
-    --primary-light: #2C5F4A;
-    --lux-accent: #B8860B;
-    --accent-light: #D4A843;
+    --lux-primary: #393089;
+    --primary-light: #330E69;
+    --lux-accent: #6FB7F2;
+    --accent-light: #AF95E4;
     --text-primary: #1A1A1A;
     --text-secondary: #4A5568;
     --text-muted: #8B9AAF;
-    --lux-border: #E8E0D4;
-    --border-accent: #D4C5AD;
-    --lux-shadow: 0 2px 12px rgba(26, 58, 45, 0.06);
-    --input-bg: #FEFDFB;
+    --lux-border: #E0C5AC;
+    --border-accent: #E0C5AC;
+    --lux-shadow: 0 2px 12px rgba(57, 48, 137, 0.06);
+    --input-bg: #FFFCF9;
     --yellow-input: #FFF8E1;
+    --elohi-mint: #00BC70;
+    --elohi-fuchsia: #E41C50;
+    --elohi-lilac: #AF95E4;
+    --elohi-pistachio: #95E1BF;
+    --elohi-blush: #F6A6B3;
+    --elohi-taupe: #E0C5AC;
   }
 
   .dark {
@@ -149,7 +155,7 @@ input[type="text"], input[type="number"], input[type="email"], input[type="passw
 
 input:focus, select:focus, textarea:focus {
   border-color: var(--lux-accent) !important;
-  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.12) !important;
+  box-shadow: 0 0 0 3px rgba(111, 183, 242, 0.2) !important;
 }
 
 /* Yellow input cells - warmer gold tint */

@@ -6,7 +6,7 @@ export default function CalculatorPage() {
       <header style={{
         background: 'var(--bg-card)',
         borderBottom: '1px solid var(--lux-border)',
-        boxShadow: '0 1px 8px rgba(26, 58, 45, 0.04)',
+        boxShadow: '0 1px 8px rgba(57, 48, 137, 0.04)',
       }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <h1 className="text-2xl font-bold" style={{

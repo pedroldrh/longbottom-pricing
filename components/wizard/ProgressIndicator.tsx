@@ -82,7 +82,7 @@ export default function ProgressIndicator({
                         ? {
                             background: 'var(--lux-primary)',
                             color: '#fff',
-                            boxShadow: '0 4px 14px rgba(27, 58, 45, 0.25)',
+                            boxShadow: '0 4px 14px rgba(57, 48, 137, 0.25)',
                             transform: 'scale(1.1)',
                             fontFamily: 'var(--font-heading), Fraunces, serif',
                             fontSize: '13px',
@@ -92,7 +92,7 @@ export default function ProgressIndicator({
                           ? {
                               background: 'var(--lux-accent)',
                               color: '#fff',
-                              boxShadow: '0 2px 8px rgba(184, 134, 11, 0.2)',
+                              boxShadow: '0 2px 8px rgba(111, 183, 242, 0.25)',
                               fontSize: '13px',
                               fontWeight: 700,
                             }

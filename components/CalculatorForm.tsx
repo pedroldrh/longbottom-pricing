@@ -472,7 +472,7 @@ export default function CalculatorForm() {
               color: 'var(--lux-accent)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(184, 134, 11, 0.06)'
+              e.currentTarget.style.background = 'rgba(111, 183, 242, 0.08)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent'
@@ -483,9 +483,9 @@ export default function CalculatorForm() {
           <button
             onClick={handleStartOver}
             className="px-5 py-2 text-white text-sm rounded-md font-medium transition-colors"
-            style={{ background: '#9B2C2C' }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = '#822727')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = '#9B2C2C')}
+            style={{ background: 'var(--elohi-fuchsia)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#c9163f')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--elohi-fuchsia)')}
           >
             Start Over
           </button>
