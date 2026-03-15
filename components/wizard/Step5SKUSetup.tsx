@@ -286,9 +286,9 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
             </div>
 
             {/* Row 5: Shelf Life */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Shelf Life</label>
+            <div className="flex justify-center">
+              <div className="w-full max-w-xs">
+                <label className="block text-sm font-medium text-gray-700 text-center">Shelf Life</label>
                 <input
                   type="text"
                   value={sku.shelfLife || ""}
