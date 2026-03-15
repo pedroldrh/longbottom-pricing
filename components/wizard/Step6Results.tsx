@@ -373,44 +373,20 @@ export default function Step6Results({
       return rows
     }
 
-    // Build all P&L blocks
+    // Render each SKU P&L block full-width (6 data cols + 7 empty = 13 total)
+    const padding = totalCols - blockCols // 7 empty columns to fill
     const blocks = skus.map((_, i) => buildPnlBlock(i))
 
-    // Render blocks side by side, 2 per row group
-    for (let i = 0; i < blocks.length; i += 2) {
-      const left = blocks[i]
-      const right = blocks[i + 1] // may be undefined
-      const maxRows = Math.max(left.length, right?.length || 0)
-
-      for (let r = 0; r < maxRows; r++) {
-        const leftRow = left[r]
-        const rightRow = right?.[r]
-
+    blocks.forEach((block) => {
+      block.forEach((row) => {
         html += '<tr>'
-
-        // Left block (always 6 cells)
-        if (leftRow) {
-          html += leftRow.join('')
-        } else {
-          html += Array(blockCols).fill('<td class="empty">&nbsp;</td>').join('')
-        }
-
-        // Spacer column
-        html += '<td class="empty">&nbsp;</td>'
-
-        // Right block (always 6 cells)
-        if (rightRow) {
-          html += rightRow.join('')
-        } else {
-          html += Array(blockCols).fill('<td class="empty">&nbsp;</td>').join('')
-        }
-
+        html += row.join('')
+        html += Array(padding).fill('<td class="empty">&nbsp;</td>').join('')
         html += '</tr>'
-      }
-
-      // Blank row between row groups
+      })
+      // Blank row between SKUs
       html += `<tr><td colspan="${totalCols}" class="empty">&nbsp;</td></tr>`
-    }
+    })
 
     // ═══════════════════════════════════════════
     // SECTION 5: TERMS & CONDITIONS (two-column layout)
