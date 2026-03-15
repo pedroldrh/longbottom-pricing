@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Server-side pricing calculator with Excel parity",
   generator: "v0.app",
   icons: {
-    icon: "/icon.svg",
+    icon: "/elohi-logo.png",
   },
 }
 
