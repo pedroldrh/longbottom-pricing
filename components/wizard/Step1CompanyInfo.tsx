@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import type { CompanyInfo } from "@/lib/types"
 
 interface Step1Props {
@@ -8,6 +9,8 @@ interface Step1Props {
 }
 
 export default function Step1CompanyInfo({ data, onChange }: Step1Props) {
+  const [showDateInfo, setShowDateInfo] = useState(false)
+
   return (
     <div className="bg-white rounded-lg shadow p-6 space-y-6">
       <div>
@@ -36,9 +39,22 @@ export default function Step1CompanyInfo({ data, onChange }: Step1Props) {
             />
           </div>
           <div>
-            <label htmlFor="effectiveDate" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="effectiveDate" className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
               Effective Date
+              <button
+                type="button"
+                onClick={() => setShowDateInfo(!showDateInfo)}
+                className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-300 text-white text-[10px] font-bold hover:bg-gray-400 transition-colors leading-none"
+                aria-label="What is the effective date?"
+              >
+                i
+              </button>
             </label>
+            {showDateInfo && (
+              <p className="text-xs text-gray-500 mt-1 mb-0.5">
+                The date on which all pricing, costs, and terms provided in this model are considered accurate and in effect. This date will appear on the final price sheet.
+              </p>
+            )}
             <input
               type="text"
               id="effectiveDate"
