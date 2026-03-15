@@ -39,6 +39,112 @@ export default function Step6Results({
     window.print()
   }
 
+  const handleDownloadCSV = () => {
+    const rows: string[][] = []
+    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`
+
+    // Header info
+    rows.push([`${companyInfo.companyName} - National Distributor Price Sheet`])
+    rows.push([`Effective Date: ${companyInfo.effectiveDate}`])
+    rows.push([])
+
+    // Product Info table
+    rows.push(["Product Name", "Case UPC", "Unit Weight (lbs)", "Units/Case", "Lbs/Case", "Case Size", "Pallet Size", "Case Cube", "Case Net Weight", "Case Gross Weight", "Cases/Pallet", "TI", "HI"])
+    skus.forEach((sku) => {
+      const lbsPerCase = sku.lbsPerUnit * sku.unitsPerCase
+      rows.push([
+        sku.productName, sku.caseUPC || "", String(sku.lbsPerUnit), String(sku.unitsPerCase),
+        lbsPerCase.toFixed(2), sku.caseSize || "", sku.palletSize || "",
+        String(sku.caseCube || ""), lbsPerCase.toFixed(2), String(sku.caseGrossWeight || ""),
+        String(sku.casesPerPallet || ""), String(sku.palletTI || ""), String(sku.palletHI || ""),
+      ])
+    })
+    rows.push([])
+
+    // Bracketed Delivered Pricing
+    rows.push(["Bracketed Delivered Pricing"])
+    rows.push(["Product", "Tier 1 - " + TIER_DESCRIPTIONS[0], "Tier 2 - " + TIER_DESCRIPTIONS[1], "Tier 3 - " + TIER_DESCRIPTIONS[2], "Tier 4 - " + TIER_DESCRIPTIONS[3], "Tier 5 - " + TIER_DESCRIPTIONS[4]])
+    skus.forEach((sku, i) => {
+      rows.push([
+        sku.productName,
+        ...Array.from({ length: 5 }, (_, t) => `$${getDeliveredPrice(i, t).toFixed(2)}`),
+      ])
+    })
+    rows.push([])
+
+    // P&L per SKU
+    skus.forEach((sku, skuIdx) => {
+      const pnl = pnlInputs[skuIdx]
+      if (!pnl) return
+      rows.push([`SKU P&L: ${sku.productName}`])
+      rows.push(["", "Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"])
+
+      const basePrice = pnl.basePricePerCase || 0
+      const volFees = shippingData.volumeFeePerCase
+
+      rows.push(["Base Price/Case", ...volFees.map(() => `$${basePrice.toFixed(2)}`)])
+      rows.push(["Volume Fee (%)", ...volFees.map((v) => `${v}%`)])
+      rows.push(["Volume Fee ($)", ...volFees.map((v) => `$${(basePrice * v / 100).toFixed(2)}`)])
+
+      const netSells = volFees.map((v) => basePrice + basePrice * v / 100)
+      rows.push(["Net Sell Price", ...netSells.map((n) => `$${n.toFixed(2)}`)])
+
+      rows.push(["Freight Charge", ...pnl.freightPerTier.map((f) => `$${f.toFixed(2)}`)])
+      rows.push(["Lumpers Fee", ...pnl.lumpersPerTier.map((l) => `$${l.toFixed(2)}`)])
+      rows.push(["Damages Fee", ...pnl.damagesPerTier.map((d) => `$${d.toFixed(2)}`)])
+
+      const delivered = netSells.map((n, t) => n + pnl.freightPerTier[t] + pnl.lumpersPerTier[t] + pnl.damagesPerTier[t])
+      rows.push(["Delivered Sell Price", ...delivered.map((d) => `$${d.toFixed(2)}`)])
+
+      const cogsTotal = netSells.map((_, t) => pnl.cogsPerCase + pnl.freightPerTier[t] + pnl.lumpersPerTier[t] + pnl.damagesPerTier[t])
+      rows.push(["COGS ($/cs.)", ...volFees.map(() => `$${pnl.cogsPerCase.toFixed(2)}`)])
+      rows.push(["COGS Total", ...cogsTotal.map((c) => `$${c.toFixed(2)}`)])
+
+      const gpBefore = delivered.map((d, t) => d - cogsTotal[t])
+      rows.push(["GP ($) Before Trade", ...gpBefore.map((g) => `$${g.toFixed(2)}`)])
+      rows.push(["GP (%) Before Trade", ...gpBefore.map((g, t) => netSells[t] !== 0 ? `${(g / netSells[t] * 100).toFixed(1)}%` : "0%")])
+
+      const ts = tradeSpendData
+      const netTradePct = ts.distributorTradeAccrual + ts.operatorTradeAccrual + ts.distributorMarketingAccrual + ts.operatorMarketingAccrual + ts.deviatedBillback
+      rows.push(["Distributor Trade (" + ts.distributorTradeAccrual + "%)", ...netSells.map((n) => `$${(n * ts.distributorTradeAccrual / 100).toFixed(2)}`)])
+      rows.push(["Operator Trade (" + ts.operatorTradeAccrual + "%)", ...netSells.map((n) => `$${(n * ts.operatorTradeAccrual / 100).toFixed(2)}`)])
+      rows.push(["Distributor Marketing (" + ts.distributorMarketingAccrual + "%)", ...netSells.map((n) => `$${(n * ts.distributorMarketingAccrual / 100).toFixed(2)}`)])
+      rows.push(["Operator Marketing (" + ts.operatorMarketingAccrual + "%)", ...netSells.map((n) => `$${(n * ts.operatorMarketingAccrual / 100).toFixed(2)}`)])
+      rows.push(["Deviated Billback (" + ts.deviatedBillback + "%)", ...netSells.map((n) => `$${(n * ts.deviatedBillback / 100).toFixed(2)}`)])
+      rows.push(["Net Trade Total (" + netTradePct + "%)", ...netSells.map((n) => `$${(n * netTradePct / 100).toFixed(2)}`)])
+
+      const gpAfter = gpBefore.map((g, t) => g - netSells[t] * netTradePct / 100)
+      rows.push(["GP ($) After Trade", ...gpAfter.map((g) => `$${g.toFixed(2)}`)])
+      rows.push(["GP (%) After Trade", ...gpAfter.map((g, t) => netSells[t] !== 0 ? `${(g / netSells[t] * 100).toFixed(1)}%` : "0%")])
+      rows.push([])
+    })
+
+    // Terms
+    rows.push(["Terms and Conditions"])
+    if (companyInfo.plantsWarehouses?.[0]) {
+      const w = companyInfo.plantsWarehouses[0]
+      rows.push(["Warehouse", `${w.name}, ${w.street}, ${w.city}, ${w.state} ${w.zipCode}`])
+    }
+    rows.push(["Remit Invoice To", `${termsData.remitCompanyName}, ${termsData.remitStreet}, ${termsData.remitCity}, ${termsData.remitState} ${termsData.remitZip}`])
+    rows.push(["Minimum Order", termsData.minimumOrder])
+    rows.push(["Transportation", termsData.transportation])
+    rows.push(["Payment Terms", termsData.paymentTerms])
+    rows.push(["Lead Time", termsData.leadTime])
+    rows.push(["PO Email", termsData.poEmail])
+    if (termsData.hasCustomerPickup === "yes") {
+      rows.push(["Customer Pickup Allowances", termsData.customerPickupAllowances])
+    }
+
+    const csvContent = rows.map((row) => row.map(esc).join(",")).join("\n")
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `${companyInfo.companyName || "Elohi"}_Price_Sheet.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   // Calculate delivered sell price: Base Price + Volume Fee + Freight + Lumpers + Damages
   const getDeliveredPrice = (skuIdx: number, tierIdx: number): number => {
     const pnl = pnlInputs[skuIdx]
@@ -68,7 +174,17 @@ export default function Step6Results({
   return (
     <div>
       {/* Print button - hidden when printing */}
-      <div className="print:hidden mb-4 flex justify-end">
+      <div className="print:hidden mb-4 flex justify-end gap-3">
+        <button
+          onClick={handleDownloadCSV}
+          className="px-6 py-2.5 rounded-md font-medium transition-colors flex items-center gap-2 border-2"
+          style={{ borderColor: 'var(--elohi-mint)', color: 'var(--elohi-mint)' }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Download CSV
+        </button>
         <button
           onClick={handlePrint}
           className="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors flex items-center gap-2"
