@@ -8,12 +8,12 @@ interface Step2Props {
   onChange: (data: Step2Props["data"]) => void
 }
 
-const FIXED_TIER_LABELS = [
-  "Full truckload",
-  "Half truckload",
-  "Quarter truckload",
-  "One pallet",
-  "Dropship (less than a pallet)",
+const TIERS = [
+  { label: "Full Truck Load", pallets: "20 pallets", size: "" },
+  { label: "1/2 Truck Load", pallets: "10 pallets", size: "" },
+  { label: "~4,000 lbs", pallets: "4 pallets", size: "" },
+  { label: "~1,000 lbs", pallets: "1 pallet", size: "" },
+  { label: "1-case Min", pallets: "", size: "" },
 ]
 
 export default function Step2ShippingTiers({ data, onChange }: Step2Props) {
@@ -34,13 +34,12 @@ export default function Step2ShippingTiers({ data, onChange }: Step2Props) {
       </div>
 
       <div className="space-y-4">
-        {FIXED_TIER_LABELS.map((label, i) => (
+        {TIERS.map((tier, i) => (
           <div key={i} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
             <div className="flex-1">
-              <div className="flex items-baseline gap-2">
-                <span className="text-xs font-medium text-gray-500">Tier {i + 1}</span>
-                <span className="text-sm font-medium text-gray-900">{label}</span>
-              </div>
+              <p className="text-sm font-bold text-gray-900">Tier {i + 1}</p>
+              {tier.pallets && <p className="text-sm text-gray-600">{tier.pallets}</p>}
+              <p className="text-sm text-gray-600">{tier.label}</p>
             </div>
             <div className="w-36">
               <label className="block text-xs text-gray-600 mb-1">Volume fee per case ($)</label>
