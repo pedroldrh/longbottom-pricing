@@ -1,26 +1,41 @@
 "use client"
 
-interface Step2Props {
-  data: {
-    tierLabels: string[]
-    volumeFeePerCase: number[]
-  }
-  onChange: (data: Step2Props["data"]) => void
+export interface ShippingData {
+  tierLabels: string[]
+  volumeFeePerCase: number[]
+  pallets: string[]
+  pounds: string[]
+  hasFreightStudy: "yes" | "no" | ""
 }
 
-const TIERS = [
-  { label: "Full Truck Load", pallets: "20 pallets", size: "" },
-  { label: "1/2 Truck Load", pallets: "10 pallets", size: "" },
-  { label: "~4,000 lbs", pallets: "4 pallets", size: "" },
-  { label: "~1,000 lbs", pallets: "1 pallet", size: "" },
-  { label: "1-case Min", pallets: "", size: "" },
-]
+interface Step2Props {
+  data: ShippingData
+  onChange: (data: ShippingData) => void
+}
+
+const TIER_NAMES = ["Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"]
 
 export default function Step2ShippingTiers({ data, onChange }: Step2Props) {
+  const pallets = data.pallets || ["", "", "", "", ""]
+  const pounds = data.pounds || ["", "", "", "", ""]
+  const hasFreightStudy = data.hasFreightStudy || ""
+
   const updateVolumeFee = (index: number, value: number) => {
     const newFees = [...data.volumeFeePerCase]
     newFees[index] = value
     onChange({ ...data, volumeFeePerCase: newFees })
+  }
+
+  const updatePallets = (index: number, value: string) => {
+    const newPallets = [...pallets]
+    newPallets[index] = value
+    onChange({ ...data, pallets: newPallets })
+  }
+
+  const updatePounds = (index: number, value: string) => {
+    const newPounds = [...pounds]
+    newPounds[index] = value
+    onChange({ ...data, pounds: newPounds })
   }
 
   return (
@@ -28,30 +43,80 @@ export default function Step2ShippingTiers({ data, onChange }: Step2Props) {
       <div>
         <h2 className="text-xl font-semibold text-gray-900">Shipping Tiers & Volume Fee</h2>
         <p className="text-sm text-gray-600 mt-1">
-          Define the volume fee per case for each shipping tier. These fees represent efficiency adjustments for
-          handling different shipment sizes.
+          Define shipping tiers with pallet counts, weights, and volume fees.
         </p>
       </div>
 
-      <div className="space-y-4">
-        {TIERS.map((tier, i) => (
-          <div key={i} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-            <div className="flex-1">
-              <p className="text-sm font-bold text-gray-900">Tier {i + 1}</p>
-              {tier.pallets && <p className="text-sm text-gray-600">{tier.pallets}</p>}
-              <p className="text-sm text-gray-600">{tier.label}</p>
-            </div>
-            <div className="w-36">
-              <label className="block text-xs text-gray-600 mb-1">Volume fee (%)</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                value={data.volumeFeePerCase[i] || 0}
-                onChange={(e) => updateVolumeFee(i, Number.parseFloat(e.target.value) || 0)}
-                placeholder="0.00"
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-              />
+      {/* Freight Study Question */}
+      <div className="bg-gray-50 rounded-lg p-4">
+        <p className="text-sm font-medium text-gray-700">Has your company completed a freight study?</p>
+        <div className="mt-2 flex gap-4">
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input
+              type="radio"
+              name="freightStudy"
+              checked={hasFreightStudy === "yes"}
+              onChange={() => onChange({ ...data, hasFreightStudy: "yes" })}
+              className="text-blue-600"
+            />
+            Yes
+          </label>
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input
+              type="radio"
+              name="freightStudy"
+              checked={hasFreightStudy === "no"}
+              onChange={() => onChange({ ...data, hasFreightStudy: "no" })}
+              className="text-blue-600"
+            />
+            No
+          </label>
+        </div>
+        {hasFreightStudy === "no" && (
+          <p className="mt-2 text-xs text-amber-700 bg-amber-50 rounded p-2">
+            Elohi can help you complete a freight study to determine accurate shipping costs per tier.
+          </p>
+        )}
+      </div>
+
+      {/* Tier Cards */}
+      <div className="space-y-3">
+        {TIER_NAMES.map((name, i) => (
+          <div key={i} className="p-4 bg-gray-50 rounded-lg">
+            <p className="text-sm font-bold text-gray-900 mb-3">{name}</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Pallets</label>
+                <input
+                  type="text"
+                  value={pallets[i]}
+                  onChange={(e) => updatePallets(i, e.target.value)}
+                  placeholder={i === 4 ? "N/A" : "e.g. 20"}
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Approx. Pounds</label>
+                <input
+                  type="text"
+                  value={pounds[i]}
+                  onChange={(e) => updatePounds(i, e.target.value)}
+                  placeholder={i === 4 ? "e.g. 1-case Min" : "e.g. ~38,000 lbs"}
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Volume fee (%)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={data.volumeFeePerCase[i] || 0}
+                  onChange={(e) => updateVolumeFee(i, Number.parseFloat(e.target.value) || 0)}
+                  placeholder="0.00"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                />
+              </div>
             </div>
           </div>
         ))}

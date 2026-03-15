@@ -102,6 +102,9 @@ export default function CalculatorForm() {
         "Dropship (less than a pallet)",
       ],
       volumeFeePerCase: [0, 2, 4, 8, 12],
+      pallets: ["", "", "", "", ""],
+      pounds: ["", "", "", "", ""],
+      hasFreightStudy: "",
     }
   })
 
@@ -288,6 +291,9 @@ export default function CalculatorForm() {
           "Dropship (less than a pallet)",
         ],
         volumeFeePerCase: [0, 2, 4, 8, 12],
+        pallets: ["", "", "", "", ""],
+        pounds: ["", "", "", "", ""],
+        hasFreightStudy: "",
       })
       setTradeSpendData({
         distributorTradeAccrual: 10,
@@ -387,6 +393,9 @@ export default function CalculatorForm() {
         "Dropship (less than a pallet)",
       ],
       volumeFeePerCase: [0, 2, 4, 8, 12],
+      pallets: ["20", "10", "4", "1", ""],
+      pounds: ["~38,000 lbs", "~19,000 lbs", "~7,500 lbs", "~1,900 lbs", "~600 lbs"],
+      hasFreightStudy: "yes",
     })
 
     setTradeSpendData({
