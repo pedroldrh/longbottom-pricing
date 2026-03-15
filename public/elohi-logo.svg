@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="#393089">
+  <!-- Outer ring -->
+  <path d="M200 16c-101.6 0-184 82.4-184 184s82.4 184 184 184 184-82.4 184-184S301.6 16 200 16zm0 340c-86.1 0-156-69.9-156-156S113.9 44 200 44s156 69.9 156 156-69.9 156-156 156z"/>
+  <!-- Middle ring with gap at top-right -->
+  <path d="M200 76c-68.5 0-124 55.5-124 124s55.5 124 124 124 124-55.5 124-124S268.5 76 200 76zm0 220c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96z"/>
+  <!-- Cut gap in middle ring top-right -->
+  <rect x="200" y="76" width="124" height="28" fill="#FFFAF5"/>
+  <!-- Inner ring -->
+  <path d="M200 136c-35.3 0-64 28.7-64 64s28.7 64 64 64 64-28.7 64-64-28.7-64-64-64zm0 100c-19.9 0-36-16.1-36-36s16.1-36 36-36 36 16.1 36 36-16.1 36-36 36z"/>
+  <!-- Cut gap in inner ring top-right -->
+  <rect x="200" y="136" width="64" height="28" fill="#FFFAF5"/>
+  <!-- The 'a' descender/tail -->
+  <rect x="236" y="200" width="28" height="96" fill="#393089"/>
+  <!-- Cut the bottom of outer ring where tail meets -->
+  <rect x="208" y="268" width="56" height="28" fill="#FFFAF5"/>
+</svg>

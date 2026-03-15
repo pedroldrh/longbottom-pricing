@@ -15,10 +15,13 @@ export default function LoginPage() {
         boxShadow: '0 4px 24px rgba(57, 48, 137, 0.08), 0 1px 4px rgba(57, 48, 137, 0.04)',
         borderTop: '4px solid var(--lux-accent)',
         border: '1px solid var(--lux-border)',
-        borderTopColor: 'var(--lux-accent)',
+        borderTopColor: 'var(--lux-primary)',
         borderTopWidth: '4px',
       }}>
         <div className="text-center">
+          <div className="flex justify-center mb-4">
+            <img src="/elohi-logo.svg" alt="Elohi" className="h-16 w-16" />
+          </div>
           <h2 className="text-3xl font-bold" style={{
             fontFamily: 'var(--font-heading), Fraunces, serif',
             color: 'var(--text-primary)',
@@ -27,9 +30,9 @@ export default function LoginPage() {
             Elohi Pricing Calculator
           </h2>
           <div className="flex items-center justify-center gap-4 mt-4">
-            <div style={{ height: '1px', width: '60px', background: 'var(--lux-accent)' }} />
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--lux-accent)' }} />
-            <div style={{ height: '1px', width: '60px', background: 'var(--lux-accent)' }} />
+            <div style={{ height: '1px', width: '60px', background: 'var(--lux-primary)' }} />
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--lux-primary)' }} />
+            <div style={{ height: '1px', width: '60px', background: 'var(--lux-primary)' }} />
           </div>
           <p className="mt-4 text-sm" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body), DM Sans, sans-serif' }}>
             Enter password to access calculator
