@@ -38,6 +38,24 @@ export default function Step4TradeSpend({ data, onChange }: Step4Props) {
         </p>
       </div>
 
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          What is your company's total trade spend as a percentage?
+        </label>
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={sum.toFixed(1)}
+            readOnly
+            className="block w-32 rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
+          />
+          <span className="text-sm text-gray-500">%</span>
+        </div>
+        <p className="text-xs text-gray-500">
+          This is the % of revenue set aside for marketing and sales activities. It is built into the pricing so it does not reduce the reported margin.
+        </p>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
