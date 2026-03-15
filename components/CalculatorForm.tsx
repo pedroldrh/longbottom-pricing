@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { createPortal } from "react-dom"
 import type { SKUInput, SKUPnLInputs, CompanyInfo, TermsConditions } from "@/lib/types"
 import ConfirmModal from "./ConfirmModal"
 import ProgressIndicator from "./wizard/ProgressIndicator"
@@ -260,6 +261,11 @@ export default function CalculatorForm() {
     type: "startOver" | "example"
   }>({ open: false, type: "startOver" })
 
+  const [headerEl, setHeaderEl] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    setHeaderEl(document.getElementById("header-buttons"))
+  }, [])
+
   const nextStep = () => {
     if (currentStep < STEPS.length) {
       setCurrentStep(currentStep + 1)
@@ -453,18 +459,12 @@ export default function CalculatorForm() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-6 space-y-4">
-        <ProgressIndicator
-          currentStep={currentStep}
-          completedSteps={completedSteps}
-          totalSteps={STEPS.length}
-          steps={STEPS}
-          onStepClick={setCurrentStep}
-        />
-        <div className="flex justify-center gap-3 pt-2">
+      {/* Portal buttons to header nav */}
+      {headerEl && createPortal(
+        <>
           <button
             onClick={() => setModal({ open: true, type: "example" })}
-            className="px-5 py-2 border-2 text-sm rounded-md font-medium transition-colors"
+            className="px-4 py-1.5 border-2 text-xs rounded-md font-medium transition-colors"
             style={{
               borderColor: 'var(--lux-accent)',
               color: 'var(--lux-accent)',
@@ -480,14 +480,25 @@ export default function CalculatorForm() {
           </button>
           <button
             onClick={() => setModal({ open: true, type: "startOver" })}
-            className="px-5 py-2 text-white text-sm rounded-md font-medium transition-colors"
+            className="px-4 py-1.5 text-white text-xs rounded-md font-medium transition-colors"
             style={{ background: 'var(--elohi-fuchsia)' }}
             onMouseEnter={(e) => (e.currentTarget.style.background = '#c9163f')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--elohi-fuchsia)')}
           >
             Start Over
           </button>
-        </div>
+        </>,
+        headerEl
+      )}
+
+      <div className="bg-white rounded-lg shadow p-6">
+        <ProgressIndicator
+          currentStep={currentStep}
+          completedSteps={completedSteps}
+          totalSteps={STEPS.length}
+          steps={STEPS}
+          onStepClick={setCurrentStep}
+        />
       </div>
 
       {currentStep === 1 && <Step1CompanyInfo data={companyInfo} onChange={setCompanyInfo} />}

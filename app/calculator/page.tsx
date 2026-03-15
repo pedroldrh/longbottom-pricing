@@ -3,30 +3,34 @@ import CalculatorForm from "@/components/CalculatorForm"
 export default function CalculatorPage() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-cream)' }}>
-      <header style={{
+      <header id="calc-header" style={{
         background: 'var(--bg-card)',
         borderBottom: '1px solid var(--lux-border)',
         boxShadow: '0 1px 8px rgba(57, 48, 137, 0.04)',
       }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-3">
-          <img src="/elohi-logo.png" alt="Elohi" className="h-12 w-12" />
-          <div>
-            <h1 className="text-xl font-bold" style={{
-              fontFamily: 'Frank New, var(--font-heading), sans-serif',
-              color: 'var(--text-primary)',
-              fontWeight: 700,
-              letterSpacing: '-0.01em',
-            }}>
-              Elohi Pricing Calculator
-            </h1>
-            <div style={{
-              marginTop: '6px',
-              height: '2px',
-              width: '100%',
-              background: 'linear-gradient(90deg, var(--lux-primary), var(--lux-accent))',
-              borderRadius: '2px',
-            }} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/elohi-logo.png" alt="Elohi" className="h-12 w-12" />
+            <div>
+              <h1 className="text-xl font-bold" style={{
+                fontFamily: 'Frank New, var(--font-heading), sans-serif',
+                color: 'var(--text-primary)',
+                fontWeight: 700,
+                letterSpacing: '-0.01em',
+              }}>
+                Elohi Pricing Calculator
+              </h1>
+              <div style={{
+                marginTop: '6px',
+                height: '2px',
+                width: '100%',
+                background: 'linear-gradient(90deg, var(--lux-primary), var(--lux-accent))',
+                borderRadius: '2px',
+              }} />
+            </div>
           </div>
+          {/* Buttons are rendered here via portal from CalculatorForm */}
+          <div id="header-buttons" className="flex items-center gap-3" />
         </div>
       </header>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
