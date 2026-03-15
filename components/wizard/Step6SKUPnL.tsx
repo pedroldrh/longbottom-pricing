@@ -3,6 +3,7 @@
 import { useState } from "react"
 import type { SKUInput, SKUPnLInputs } from "@/lib/types"
 import type { TradeSpendData } from "./Step4TradeSpend"
+import InfoTip from "@/components/InfoTip"
 
 const TIER_HEADERS = [
   { label: "Tier 1", sub: "20 pallets, Full Truck Load" },
@@ -248,7 +249,7 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600">COGS ($/cs.)</label>
+                    <label className="flex items-center text-xs font-medium text-gray-600">COGS ($/cs.)<InfoTip text="Cost of Goods Sold per case — the direct manufacturing or procurement cost to produce one case of this product, excluding freight and trade spend." /></label>
                     <input
                       type="number"
                       step="0.01"
@@ -346,7 +347,7 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
 
                     {/* Lumpers Fee */}
                     <tr className="border-b border-gray-100">
-                      <td className="py-2 pr-3 text-gray-700">Lumpers Fee</td>
+                      <td className="py-2 pr-3 text-gray-700"><span className="flex items-center">Lumpers Fee<InfoTip text="Fee charged by third-party workers to unload freight at a warehouse or distribution center. Common in foodservice distribution." /></span></td>
                       {tiers.map((_, t) => (
                         <td key={t} className="py-1 px-1">
                           <input
@@ -364,7 +365,7 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
 
                     {/* Damages Fee */}
                     <tr className="border-b-2 border-gray-300">
-                      <td className="py-2 pr-3 text-gray-700">Damages Fee</td>
+                      <td className="py-2 pr-3 text-gray-700"><span className="flex items-center">Damages Fee<InfoTip text="An allowance built into pricing to cover product damage during shipping and handling. Typically expressed as a per-case charge." /></span></td>
                       {tiers.map((_, t) => (
                         <td key={t} className="py-1 px-1">
                           <input

@@ -1,5 +1,7 @@
 "use client"
 
+import InfoTip from "@/components/InfoTip"
+
 export interface TradeSpendData {
   distributorTradeAccrual: number
   operatorTradeAccrual: number
@@ -14,11 +16,11 @@ interface Step4Props {
 }
 
 const ROWS = [
-  { key: "distributorTradeAccrual" as const, label: "Distributor Trade Accrual", range: "7% – 12%**" },
-  { key: "operatorTradeAccrual" as const, label: "Operator Trade Accrual", range: "5% – 8%" },
-  { key: "distributorMarketingAccrual" as const, label: "Distributor Marketing Accrual", range: "4% – 8%" },
-  { key: "operatorMarketingAccrual" as const, label: "Operator Marketing Accrual", range: "2% – 4%" },
-  { key: "deviatedBillback" as const, label: "Deviated Billback", range: "As Negotiated" },
+  { key: "distributorTradeAccrual" as const, label: "Distributor Trade Accrual", range: "7% – 12%**", tip: "Percentage of net sell price paid to distributors for promotional activities, slotting fees, and sales incentives." },
+  { key: "operatorTradeAccrual" as const, label: "Operator Trade Accrual", range: "5% – 8%", tip: "Percentage paid to foodservice operators (restaurants, cafeterias, hotels) as purchasing incentives or rebates." },
+  { key: "distributorMarketingAccrual" as const, label: "Distributor Marketing Accrual", range: "4% – 8%", tip: "Percentage allocated for distributor-facing marketing programs such as catalogs, trade shows, and co-op advertising." },
+  { key: "operatorMarketingAccrual" as const, label: "Operator Marketing Accrual", range: "2% – 4%", tip: "Percentage allocated for operator-facing marketing like menu placement, sampling programs, and promotional materials." },
+  { key: "deviatedBillback" as const, label: "Deviated Billback", range: "As Negotiated", tip: "A pricing arrangement where the manufacturer agrees to a lower 'deviated' price for a specific operator through a distributor, then reimburses the distributor for the price difference." },
 ]
 
 export default function Step4TradeSpend({ data, onChange }: Step4Props) {
@@ -88,7 +90,7 @@ export default function Step4TradeSpend({ data, onChange }: Step4Props) {
                   </div>
                 </td>
                 <td className="py-3 pl-4 text-sm text-gray-900 font-medium">
-                  {row.label}
+                  <span className="flex items-center">{row.label}<InfoTip text={row.tip} /></span>
                 </td>
               </tr>
             ))}

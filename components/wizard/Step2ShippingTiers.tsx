@@ -1,5 +1,7 @@
 "use client"
 
+import InfoTip from "@/components/InfoTip"
+
 export interface ShippingData {
   tierLabels: string[]
   volumeFeePerCase: number[]
@@ -49,7 +51,7 @@ export default function Step2ShippingTiers({ data, onChange }: Step2Props) {
 
       {/* Freight Study Question */}
       <div className="bg-gray-50 rounded-lg p-4">
-        <p className="text-sm font-medium text-gray-700">Has your company completed a freight study?</p>
+        <p className="flex items-center text-sm font-medium text-gray-700">Has your company completed a freight study?<InfoTip text="A freight study analyzes your shipping costs across different routes, carriers, and volume levels to establish accurate per-unit freight rates for each tier." /></p>
         <div className="mt-2 flex gap-4">
           <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
             <input
@@ -106,7 +108,7 @@ export default function Step2ShippingTiers({ data, onChange }: Step2Props) {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Volume fee (%)</label>
+                <label className="flex items-center text-xs text-gray-600 mb-1">Volume fee (%)<InfoTip text="A percentage markup on the base case price based on order size. Smaller orders have higher fees to offset handling and logistics inefficiency." /></label>
                 <input
                   type="number"
                   step="0.01"

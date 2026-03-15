@@ -4,6 +4,7 @@ import { useState } from "react"
 import type { SKUInput } from "@/lib/types"
 import { Trash2, Check } from 'lucide-react'
 import CustomSelect from "@/components/CustomSelect"
+import InfoTip from "@/components/InfoTip"
 
 interface Step5Props {
   skus: SKUInput[]
@@ -200,7 +201,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
             {/* Row 3: Case Cube, Case Net Weight (computed), Case Gross Weight, Cases/Pallet */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Case Cube (Cu. ft.)</label>
+                <label className="flex items-center text-sm font-medium text-gray-700">Case Cube (Cu. ft.)<InfoTip text="The volume of one case in cubic feet. Used to calculate how many cases fit on a truck or pallet for freight planning." /></label>
                 <input
                   type="number"
                   step="0.01"
@@ -249,7 +250,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
             {/* Row 4: Pallet TI, HI, Temperature Class, Shelf Life */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Pallet TI</label>
+                <label className="flex items-center text-sm font-medium text-gray-700">Pallet TI<InfoTip text="Tie — the number of cases that fit in one layer on a pallet. Multiply TI × HI to get total cases per pallet." /></label>
                 <input
                   type="number"
                   step="1"
@@ -261,7 +262,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Pallet HI</label>
+                <label className="flex items-center text-sm font-medium text-gray-700">Pallet HI<InfoTip text="High — the number of layers stacked on a pallet. Multiply TI × HI to get total cases per pallet." /></label>
                 <input
                   type="number"
                   step="1"
