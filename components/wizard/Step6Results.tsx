@@ -227,27 +227,27 @@ export default function Step6Results({
       const blankRow = () => {
         rows.push(Array(blockCols).fill('<td class="empty">&nbsp;</td>'))
       }
-      // Helper: money cell
+      // Helper: money cell — inline style for Excel compatibility
       const mc = (v: number, extra?: string) => {
         const cls = extra ? `money ${extra}` : 'money'
-        return `<td class="${cls}">$${v.toFixed(2)}</td>`
+        return `<td class="${cls}" style="text-align:right;">$${v.toFixed(2)}</td>`
       }
       // Helper: percent cell
       const pc = (v: number, base: number, extra?: string) => {
         const pctVal = base !== 0 ? (v / base * 100).toFixed(1) : '0.0'
         const cls = extra ? `pct ${extra}` : 'pct'
-        return `<td class="${cls}">${pctVal}%</td>`
+        return `<td class="${cls}" style="text-align:right;">${pctVal}%</td>`
       }
       // Helper: GP money cell (colored)
       const gpMc = (v: number) => {
         const cls = v >= 0 ? 'pos' : 'neg'
-        return `<td class="money ${cls}">$${v.toFixed(2)}</td>`
+        return `<td class="money ${cls}" style="text-align:right;">$${v.toFixed(2)}</td>`
       }
       // Helper: GP percent cell (colored)
       const gpPc = (v: number, base: number) => {
         const pctVal = base !== 0 ? (v / base * 100).toFixed(1) : '0.0'
         const cls = v >= 0 ? 'pos' : 'neg'
-        return `<td class="pct ${cls}">${pctVal}%</td>`
+        return `<td class="pct ${cls}" style="text-align:right;">${pctVal}%</td>`
       }
 
       // Row 1: SKU header
@@ -271,13 +271,13 @@ export default function Step6Results({
       // Row 7: Tier headers
       rows.push([
         '<td class="colheader">&nbsp;</td>',
-        ...Array.from({ length: 5 }, (_, i) => `<td class="colheader-c">Tier ${i + 1}</td>`)
+        ...Array.from({ length: 5 }, (_, i) => `<td class="colheader-c" style="text-align:center;">Tier ${i + 1}</td>`)
       ])
 
       // Row 8: Tier descriptions
       rows.push([
         '<td class="colheader">&nbsp;</td>',
-        ...TIER_DESCRIPTIONS.map((d) => `<td class="colheader-c" style="font-size:8pt; font-weight:normal;">${esc(d)}</td>`)
+        ...TIER_DESCRIPTIONS.map((d) => `<td class="colheader-c" style="text-align:center; font-size:8pt; font-weight:normal;">${esc(d)}</td>`)
       ])
 
       // Row 9: Base Price/Case across tiers
@@ -316,7 +316,7 @@ export default function Step6Results({
       // Row 20: Delivered Sell Price
       rows.push([
         '<td class="bold divider">Delivered Sell Price</td>',
-        ...delivered.map((d) => `<td class="money bold divider">$${d.toFixed(2)}</td>`)
+        ...delivered.map((d) => `<td class="money bold divider" style="text-align:right;">$${d.toFixed(2)}</td>`)
       ])
 
       // Row 21: blank
@@ -358,7 +358,7 @@ export default function Step6Results({
       // Row 33: Net Trade Total
       rows.push([
         `<td class="bold divider">Net Trade Total (${netTradePct.toFixed(1)}%)</td>`,
-        ...netSells.map((n) => `<td class="money bold divider">$${(n * netTradePct / 100).toFixed(2)}</td>`)
+        ...netSells.map((n) => `<td class="money bold divider" style="text-align:right;">$${(n * netTradePct / 100).toFixed(2)}</td>`)
       ])
 
       // Row 34: blank
