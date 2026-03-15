@@ -232,13 +232,12 @@ export default function Step7TermsConditions({ companyInfo, skus, termsData, onC
                 </div>
               </div>
               {termsData.hasCustomerPickup === "yes" && (
-                <div className="ml-6">
+                <div className="flex justify-center">
                   <input
                     type="text"
                     value={termsData.customerPickupAllowances}
                     onChange={(e) => update("customerPickupAllowances", e.target.value)}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-                    placeholder="Enter pickup allowance details"
+                    className="block w-full max-w-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                   />
                 </div>
               )}
