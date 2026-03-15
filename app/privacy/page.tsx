@@ -56,7 +56,7 @@ export default function PrivacyPage() {
           ))}
         </div>
 
-        <div className="mt-10 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <div className="mt-10 rounded-lg p-4 text-sm" style={{ background: 'var(--elohi-pistachio)', color: '#1a4d3e', border: '1px solid #7dd4a8' }}>
           This page is a standard operating draft for website use and should be reviewed by Elohi before final legal adoption.
         </div>
       </div>

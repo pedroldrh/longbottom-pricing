@@ -173,7 +173,7 @@ export default function Step5PlantsWarehouses({ data, onChange }: Step5Props) {
                 </div>
 
                 {plant.isThirdPartyWarehouse === "yes" && (
-                  <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                  <div className="rounded-md px-4 py-3 text-sm" style={{ background: 'var(--elohi-pistachio)', color: '#1a4d3e', border: '1px solid #7dd4a8' }}>
                     This part will be changed in the future. The idea is to ask specific questions about the 3rd party warehouse.
                   </div>
                 )}

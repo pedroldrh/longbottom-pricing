@@ -73,7 +73,7 @@ export default function Step2ShippingTiers({ data, onChange }: Step2Props) {
           </label>
         </div>
         {hasFreightStudy === "no" && (
-          <p className="mt-2 text-xs text-amber-700 bg-amber-50 rounded p-2">
+          <p className="mt-2 text-xs rounded p-2" style={{ background: 'var(--elohi-pistachio)', color: '#1a4d3e' }}>
             Elohi can help you complete a freight study to determine accurate shipping costs per tier.
           </p>
         )}
@@ -122,8 +122,8 @@ export default function Step2ShippingTiers({ data, onChange }: Step2Props) {
         ))}
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-        <p className="text-xs text-blue-800">
+      <div className="rounded-md p-4" style={{ background: '#f0ebfa', border: '1px solid var(--elohi-lilac)' }}>
+        <p className="text-xs" style={{ color: '#330E69' }}>
           <strong>Note:</strong> Volume fees are applied per case and reflect the handling efficiency of different
           shipment sizes. Full truckloads typically have lower fees, while smaller shipments (dropship) have higher
           fees.
