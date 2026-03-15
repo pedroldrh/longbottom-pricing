@@ -422,16 +422,9 @@ export default function CalculatorForm() {
   const isTermsComplete = currentStep > 7
   const isFinalOutputComplete = results.length > 0
 
-  const completedSteps = [
-    isCompanyInfoComplete,
-    isProductSetupComplete,
-    isTradeSpendComplete,
-    isShippingTiersComplete,
-    isPlantsWarehousesComplete,
-    isFreightComplete,
-    isTermsComplete,
-    isFinalOutputComplete,
-  ]
+  // A step is "completed" only if the user has moved past it
+  // A step is "completed" only if the user has moved past it
+  const completedSteps = STEPS.map((_, index) => index + 1 < currentStep)
 
   return (
     <div className="space-y-6">
