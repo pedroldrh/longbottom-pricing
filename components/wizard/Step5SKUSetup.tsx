@@ -1,7 +1,8 @@
 "use client"
 
+import { useState } from "react"
 import type { SKUInput } from "@/lib/types"
-import { Trash2 } from 'lucide-react'
+import { Trash2, Check } from 'lucide-react'
 
 interface Step5Props {
   skus: SKUInput[]
@@ -29,6 +30,16 @@ const emptySKU: SKUInput = {
 }
 
 export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
+  const [savedIndex, setSavedIndex] = useState<number | null>(null)
+
+  const handleSave = (index: number) => {
+    // Data is already persisted via localStorage in CalculatorForm,
+    // this triggers a visual confirmation for the user
+    onChange([...skus])
+    setSavedIndex(index)
+    setTimeout(() => setSavedIndex(null), 2000)
+  }
+
   const addSKU = () => {
     onChange([...skus, { ...emptySKU }])
   }
@@ -87,6 +98,20 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                 {sku.productName || `SKU #${index + 1}`}
               </h3>
               <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleSave(index)}
+                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                    savedIndex === index
+                      ? "bg-green-600 text-white"
+                      : "bg-green-50 text-green-700 hover:bg-green-100"
+                  }`}
+                >
+                  {savedIndex === index ? (
+                    <span className="flex items-center gap-1"><Check className="w-4 h-4" /> Saved</span>
+                  ) : (
+                    "Save"
+                  )}
+                </button>
                 <button
                   onClick={() => cloneSKU(index)}
                   className="px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md"
