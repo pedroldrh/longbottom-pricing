@@ -167,12 +167,21 @@ export default function CalculatorForm() {
           const parsed = JSON.parse(saved)
           return Array.isArray(parsed)
             ? parsed.map((sku: any) => ({
+                vendorItemNumber: sku.vendorItemNumber ?? "",
                 productName: sku.productName ?? "",
+                caseUPC: sku.caseUPC ?? "",
                 temperatureClass: sku.temperatureClass ?? "shelf",
                 shelfLife: sku.shelfLife ?? "",
                 transportation: sku.transportation ?? "",
                 lbsPerUnit: sku.lbsPerUnit ?? 0,
                 unitsPerCase: sku.unitsPerCase ?? 1,
+                caseSize: sku.caseSize ?? "",
+                palletSize: sku.palletSize ?? "",
+                caseCube: sku.caseCube ?? 0,
+                caseGrossWeight: sku.caseGrossWeight ?? 0,
+                casesPerPallet: sku.casesPerPallet ?? 0,
+                palletTI: sku.palletTI ?? 0,
+                palletHI: sku.palletHI ?? 0,
                 basePricePerCase: sku.basePricePerCase ?? 0,
                 cogsPerLb: sku.cogsPerLb ?? 0,
               }))

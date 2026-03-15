@@ -9,12 +9,21 @@ export interface FreightRateConfig {
 }
 
 export const SKUInputSchema = z.object({
+  vendorItemNumber: z.string().optional().default(""),
   productName: z.string().min(1, "Product name is required"),
+  caseUPC: z.string().optional().default(""),
   temperatureClass: TemperatureClassSchema,
   shelfLife: z.string().optional().default(""),
   transportation: z.string().optional().default(""),
   lbsPerUnit: z.number().positive("Must be greater than 0"),
   unitsPerCase: z.number().int().min(1, "Must be at least 1"),
+  caseSize: z.string().optional().default(""),
+  palletSize: z.string().optional().default(""),
+  caseCube: z.number().min(0).optional().default(0),
+  caseGrossWeight: z.number().min(0).optional().default(0),
+  casesPerPallet: z.number().int().min(0).optional().default(0),
+  palletTI: z.number().int().min(0).optional().default(0),
+  palletHI: z.number().int().min(0).optional().default(0),
   basePricePerCase: z.number().min(0, "Must be non-negative"),
   cogsPerLb: z.number().min(0, "Must be non-negative"),
 })

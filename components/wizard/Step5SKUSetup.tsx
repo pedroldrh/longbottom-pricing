@@ -8,21 +8,29 @@ interface Step5Props {
   onChange: (skus: SKUInput[]) => void
 }
 
+const emptySKU: SKUInput = {
+  vendorItemNumber: "",
+  productName: "",
+  caseUPC: "",
+  temperatureClass: "shelf",
+  shelfLife: "",
+  transportation: "",
+  lbsPerUnit: 0,
+  unitsPerCase: 1,
+  caseSize: "",
+  palletSize: "",
+  caseCube: 0,
+  caseGrossWeight: 0,
+  casesPerPallet: 0,
+  palletTI: 0,
+  palletHI: 0,
+  basePricePerCase: 0,
+  cogsPerLb: 0,
+}
+
 export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
   const addSKU = () => {
-    onChange([
-      ...skus,
-      {
-        productName: "",
-        temperatureClass: "shelf",
-        shelfLife: "",
-        transportation: "",
-        lbsPerUnit: 0,
-        unitsPerCase: 1,
-        basePricePerCase: 0,
-        cogsPerLb: 0,
-      },
-    ])
+    onChange([...skus, { ...emptySKU }])
   }
 
   const updateSKU = (index: number, updatedSKU: SKUInput) => {
@@ -41,7 +49,6 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
       ...sourceSku,
       productName: sourceSku.productName ? `${sourceSku.productName} Copy` : "",
     }
-
     const updated = [...skus]
     updated.splice(index + 1, 0, clonedSku)
     onChange(updated)
@@ -52,8 +59,8 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">SKU Setup</h2>
-            <p className="text-sm text-gray-600">Add and configure multiple SKUs with required fields.</p>
+            <h2 className="text-xl font-semibold text-gray-900">Product Set-Up</h2>
+            <p className="text-sm text-gray-600">Enter your product information for each SKU.</p>
           </div>
           <button
             onClick={addSKU}
@@ -65,17 +72,16 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
 
         {skus.length === 0 && (
           <div className="text-center py-8 text-gray-500">
-            <p>No SKUs added yet. Click "Add SKU" to get started.</p>
+            <p>No SKUs added yet. Click &quot;Add SKU&quot; to get started.</p>
           </div>
         )}
       </div>
 
       {skus.map((sku, index) => {
-        const lbsPerCase = sku.lbsPerUnit * sku.unitsPerCase
-        const pricePerLb = lbsPerCase > 0 ? sku.basePricePerCase / lbsPerCase : 0
+        const caseNetWeight = sku.lbsPerUnit * sku.unitsPerCase
 
         return (
-          <div key={index} className="bg-white rounded-lg shadow p-6 space-y-4">
+          <div key={index} className="bg-white rounded-lg shadow p-6 space-y-5">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">SKU #{index + 1}</h3>
               <div className="flex items-center gap-2">
@@ -95,29 +101,178 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Product Name / Description</label>
-              <input
-                type="text"
-                value={sku.productName}
-                onChange={(e) => updateSKU(index, { ...sku, productName: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-              />
+            {/* Row 1: Vendor Item Number, Product Name, Case UPC */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Vendor Item Number</label>
+                <input
+                  type="text"
+                  value={sku.vendorItemNumber || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, vendorItemNumber: e.target.value })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="e.g. PBG1001"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Product Name / Description</label>
+                <input
+                  type="text"
+                  value={sku.productName}
+                  onChange={(e) => updateSKU(index, { ...sku, productName: e.target.value })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="e.g. BeefWorks Plant-Based Ground"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Case UPC</label>
+                <input
+                  type="text"
+                  value={sku.caseUPC || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, caseUPC: e.target.value })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="e.g. 1-08-60008-52962-6"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Temperature Class</label>
-              <select
-                value={sku.temperatureClass}
-                onChange={(e) => updateSKU(index, { ...sku, temperatureClass: e.target.value as any })}
-                className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-              >
-                <option value="shelf">Shelf</option>
-                <option value="refrigerated">Refrigerated</option>
-                <option value="frozen">Frozen</option>
-              </select>
+            {/* Row 2: Unit Weight, Units/Case, Case Size, Pallet Size */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Unit Weight (lbs.)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={sku.lbsPerUnit || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, lbsPerUnit: Number.parseFloat(e.target.value) || 0 })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="2.50"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Units / Case</label>
+                <input
+                  type="number"
+                  step="1"
+                  min="1"
+                  value={sku.unitsPerCase || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, unitsPerCase: Number.parseInt(e.target.value) || 1 })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="4"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Case Size L x W x H (in.)</label>
+                <input
+                  type="text"
+                  value={sku.caseSize || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, caseSize: e.target.value })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="10.0 x 15.0 x 4.5"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Pallet Size L x W x H (in.)</label>
+                <input
+                  type="text"
+                  value={sku.palletSize || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, palletSize: e.target.value })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="48 x 40 x 50"
+                />
+              </div>
             </div>
 
+            {/* Row 3: Case Cube, Case Net Weight (computed), Case Gross Weight, Cases/Pallet */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Case Cube (Cu. ft.)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={sku.caseCube || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, caseCube: Number.parseFloat(e.target.value) || 0 })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="0.39"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Case Net Weight (lbs.)</label>
+                <input
+                  type="text"
+                  value={caseNetWeight.toFixed(2)}
+                  readOnly
+                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Case Gross Weight (lbs.)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={sku.caseGrossWeight || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, caseGrossWeight: Number.parseFloat(e.target.value) || 0 })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="10.95"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Cases / Pallet</label>
+                <input
+                  type="number"
+                  step="1"
+                  min="0"
+                  value={sku.casesPerPallet || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, casesPerPallet: Number.parseInt(e.target.value) || 0 })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="100"
+                />
+              </div>
+            </div>
+
+            {/* Row 4: Pallet TI, HI, Temperature Class */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Pallet TI</label>
+                <input
+                  type="number"
+                  step="1"
+                  min="0"
+                  value={sku.palletTI || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, palletTI: Number.parseInt(e.target.value) || 0 })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="10"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Pallet HI</label>
+                <input
+                  type="number"
+                  step="1"
+                  min="0"
+                  value={sku.palletHI || ""}
+                  onChange={(e) => updateSKU(index, { ...sku, palletHI: Number.parseInt(e.target.value) || 0 })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="10"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Temperature Class</label>
+                <select
+                  value={sku.temperatureClass}
+                  onChange={(e) => updateSKU(index, { ...sku, temperatureClass: e.target.value as any })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                >
+                  <option value="shelf">Shelf</option>
+                  <option value="refrigerated">Refrigerated</option>
+                  <option value="frozen">Frozen</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Row 5: Shelf Life, Transportation */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Shelf Life</label>
@@ -125,78 +280,22 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   type="text"
                   value={sku.shelfLife || ""}
                   onChange={(e) => updateSKU(index, { ...sku, shelfLife: e.target.value })}
-                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700">Transportation</label>
                 <input
                   type="text"
                   value={sku.transportation || ""}
                   onChange={(e) => updateSKU(index, { ...sku, transportation: e.target.value })}
-                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Unit Weight</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={sku.lbsPerUnit || ""}
-                  onChange={(e) => updateSKU(index, { ...sku, lbsPerUnit: Number.parseFloat(e.target.value) || 0 })}
-                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Units per Case</label>
-                <input
-                  type="number"
-                  step="1"
-                  min="1"
-                  value={sku.unitsPerCase || ""}
-                  onChange={(e) => updateSKU(index, { ...sku, unitsPerCase: Number.parseInt(e.target.value) || 1 })}
-                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 pt-2 border-t border-gray-200">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Lbs/Case</label>
-                <input
-                  type="text"
-                  value={lbsPerCase.toFixed(2)}
-                  readOnly
-                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">$/Case</label>
-                <input
-                  type="text"
-                  value={sku.basePricePerCase.toFixed(2)}
-                  readOnly
-                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">$/Lb</label>
-                <input
-                  type="text"
-                  value={pricePerLb.toFixed(2)}
-                  readOnly
-                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            {/* Row 6: Pricing */}
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Base Price per Case ($)</label>
                 <input
@@ -207,10 +306,9 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   onChange={(e) =>
                     updateSKU(index, { ...sku, basePricePerCase: Number.parseFloat(e.target.value) || 0 })
                   }
-                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700">COGS per Lb ($)</label>
                 <input
@@ -219,7 +317,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   min="0"
                   value={sku.cogsPerLb || ""}
                   onChange={(e) => updateSKU(index, { ...sku, cogsPerLb: Number.parseFloat(e.target.value) || 0 })}
-                  className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                 />
               </div>
             </div>
