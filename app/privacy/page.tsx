@@ -33,12 +33,14 @@ export default function PrivacyPage() {
     <div className="bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl rounded-xl bg-white p-8 shadow-sm">
         <div className="border-b border-gray-200 pb-6">
-          <Link
-            href="/calculator"
-            className="inline-flex items-center rounded-md bg-blue-600 px-5 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-700"
-          >
-            Back to Calculator
-          </Link>
+          <div className="flex justify-end">
+            <Link
+              href="/calculator"
+              className="inline-flex items-center rounded-md bg-blue-600 px-5 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-700"
+            >
+              Back to Calculator
+            </Link>
+          </div>
           <h1 className="mt-2 text-3xl font-bold text-gray-900">Privacy Policy</h1>
           <p className="mt-3 text-sm text-gray-600">
             This page describes the standard privacy treatment expected for Elohi Pricing Calculator.
