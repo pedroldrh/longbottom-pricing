@@ -301,6 +301,142 @@ export default function CalculatorForm() {
     }
   }
 
+  const handleSeeExample = () => {
+    if (
+      !confirm(
+        "This will fill all fields with example data to demonstrate a complete pricing model. Any existing data will be overwritten. Continue?"
+      )
+    )
+      return
+
+    setCompanyInfo({
+      effectiveDate: "04/01/2023",
+      companyName: "Longbottom Foods",
+      contactName: "John Smith",
+      contactEmail: "john@longbottomfoods.com",
+      contactPhone: "(555) 123-4567",
+      plantsWarehouses: [
+        {
+          id: `${Date.now()}-0`,
+          name: "Smart Warehousing",
+          street: "16500 E. Truman Road",
+          city: "Independence",
+          state: "MO",
+          zipCode: "64050",
+          isThirdPartyWarehouse: "yes",
+          notes: "",
+        },
+      ],
+    })
+
+    setSkus([
+      {
+        productName: "Virgin Mary 7.5 oz cans 4pk x 6",
+        caseUPC: "1-08-60008-52962-6",
+        temperatureClass: "shelf",
+        shelfLife: "18 months",
+        lbsPerUnit: 1.88,
+        unitsPerCase: 6,
+        caseSize: "10.0 x 15.0 x 4.5",
+        palletSize: "48 x 40 x 50",
+        caseCube: 0.39,
+        caseGrossWeight: 10.95,
+        casesPerPallet: 100,
+        palletTI: 10,
+        palletHI: 10,
+      },
+      {
+        productName: "Virgin Mary 7.5 oz cans x 24",
+        caseUPC: "1-08-60008-52963-3",
+        temperatureClass: "shelf",
+        shelfLife: "18 months",
+        lbsPerUnit: 0.47,
+        unitsPerCase: 24,
+        caseSize: "10.0 x 15.0 x 4.5",
+        palletSize: "48 x 40 x 50",
+        caseCube: 0.39,
+        caseGrossWeight: 10.95,
+        casesPerPallet: 100,
+        palletTI: 10,
+        palletHI: 10,
+      },
+      {
+        productName: "Virgin Mary 1L x 6",
+        caseUPC: "1-08-60008-52964-0",
+        temperatureClass: "shelf",
+        shelfLife: "18 months",
+        lbsPerUnit: 2.11,
+        unitsPerCase: 6,
+        caseSize: "10.0 x 15.0 x 4.5",
+        palletSize: "48 x 40 x 50",
+        caseCube: 0.39,
+        caseGrossWeight: 10.95,
+        casesPerPallet: 100,
+        palletTI: 10,
+        palletHI: 10,
+      },
+    ])
+
+    setShippingData({
+      tierLabels: [
+        "Full truckload",
+        "Half truckload",
+        "Quarter truckload",
+        "One pallet",
+        "Dropship (less than a pallet)",
+      ],
+      volumeFeePerCase: [0, 2, 4, 8, 12],
+    })
+
+    setTradeSpendData({
+      distributorTradeAccrual: 10,
+      operatorTradeAccrual: 5,
+      distributorMarketingAccrual: 0,
+      operatorMarketingAccrual: 0,
+      deviatedBillback: 0,
+    })
+
+    setPnlInputs([
+      {
+        basePricePerCase: 28.73,
+        cogsPerCase: 17.5,
+        freightPerTier: [1.91, 2.25, 3.15, 5.63, 8.44],
+        lumpersPerTier: [0, 0, 0, 0, 0],
+        damagesPerTier: [0, 0, 0, 0, 0],
+      },
+      {
+        basePricePerCase: 28.73,
+        cogsPerCase: 15.5,
+        freightPerTier: [1.91, 2.25, 3.15, 5.63, 8.44],
+        lumpersPerTier: [0, 0, 0, 0, 0],
+        damagesPerTier: [0, 0, 0, 0, 0],
+      },
+      {
+        basePricePerCase: 30.4,
+        cogsPerCase: 15.53,
+        freightPerTier: [2.15, 2.53, 3.54, 6.33, 9.5],
+        lumpersPerTier: [0, 0, 0, 0, 0],
+        damagesPerTier: [0, 0, 0, 0, 0],
+      },
+    ])
+
+    setTermsData({
+      remitCompanyName: "Longbottom Foods",
+      remitStreet: "27 Drydock 2nd Floor",
+      remitCity: "Boston",
+      remitState: "MA",
+      remitZip: "02210",
+      minimumOrder: "Any Order Size: See Price Tiers",
+      transportation: "Product ships shelf stable",
+      paymentTerms: "Net 30",
+      leadTime: "3 weeks from receipt of PO to ship date",
+      poEmail: "orders@longbottomfoods.com",
+      customerPickupAllowances: "Contact for details",
+    })
+
+    setCurrentStep(1)
+  }
+
   // A step is "completed" only if the user has moved past it
   const completedSteps = STEPS.map((_, index) => index + 1 < currentStep)
 
@@ -314,7 +450,13 @@ export default function CalculatorForm() {
           steps={STEPS}
           onStepClick={setCurrentStep}
         />
-        <div className="flex justify-center pt-2">
+        <div className="flex justify-center gap-3 pt-2">
+          <button
+            onClick={handleSeeExample}
+            className="px-5 py-2 border-2 border-teal-600 text-teal-700 text-sm rounded-md hover:bg-teal-50 font-medium transition-colors"
+          >
+            See Example Model
+          </button>
           <button
             onClick={handleStartOver}
             className="px-5 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 font-medium transition-colors"
@@ -347,7 +489,14 @@ export default function CalculatorForm() {
         />
       )}
       {currentStep === 8 && (
-        <Step6Results skus={skus} />
+        <Step6Results
+          skus={skus}
+          pnlInputs={pnlInputs}
+          shippingData={shippingData}
+          tradeSpendData={tradeSpendData}
+          companyInfo={companyInfo}
+          termsData={termsData}
+        />
       )}
 
       {/* Navigation Buttons */}
