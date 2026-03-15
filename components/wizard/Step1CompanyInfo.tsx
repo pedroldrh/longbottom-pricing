@@ -53,20 +53,22 @@ export default function Step1CompanyInfo({ data, onChange }: Step1Props) {
           <div>
             <label htmlFor="effectiveDate" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 relative">
               Effective Date
-              <button
-                type="button"
-                onClick={() => setShowDateInfo(!showDateInfo)}
-                className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-300 text-white text-[10px] font-bold hover:bg-gray-400 transition-colors leading-none"
-                aria-label="What is the effective date?"
-              >
-                i
-              </button>
-              {showDateInfo && (
-                <div ref={tooltipRef} className="absolute left-0 bottom-full mb-2 z-10 w-72 bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg">
-                  The date on which all pricing, costs, and terms provided in this model are considered accurate and in effect. This date will appear on the final price sheet.
-                  <div className="absolute -bottom-1 left-12 w-2 h-2 bg-gray-800 rotate-45" />
-                </div>
-              )}
+              <span className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowDateInfo(!showDateInfo)}
+                  className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-300 text-white text-[10px] font-bold hover:bg-gray-400 transition-colors leading-none"
+                  aria-label="What is the effective date?"
+                >
+                  i
+                </button>
+                {showDateInfo && (
+                  <div ref={tooltipRef} className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-10 w-72 bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg">
+                    The date on which all pricing, costs, and terms provided in this model are considered accurate and in effect. This date will appear on the final price sheet.
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45" />
+                  </div>
+                )}
+              </span>
             </label>
             <input
               type="text"
