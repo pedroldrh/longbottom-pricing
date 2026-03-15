@@ -272,7 +272,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
               </div>
             </div>
 
-            {/* Row 5: Shelf Life, Transportation */}
+            {/* Row 5: Shelf Life */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Shelf Life</label>
@@ -280,43 +280,6 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   type="text"
                   value={sku.shelfLife || ""}
                   onChange={(e) => updateSKU(index, { ...sku, shelfLife: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Transportation</label>
-                <input
-                  type="text"
-                  value={sku.transportation || ""}
-                  onChange={(e) => updateSKU(index, { ...sku, transportation: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-                />
-              </div>
-            </div>
-
-            {/* Row 6: Pricing */}
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Base Price per Case ($)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={sku.basePricePerCase || ""}
-                  onChange={(e) =>
-                    updateSKU(index, { ...sku, basePricePerCase: Number.parseFloat(e.target.value) || 0 })
-                  }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">COGS per Lb ($)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={sku.cogsPerLb || ""}
-                  onChange={(e) => updateSKU(index, { ...sku, cogsPerLb: Number.parseFloat(e.target.value) || 0 })}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                 />
               </div>
