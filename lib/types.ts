@@ -37,6 +37,13 @@ export const SettingsSchema = z.object({
     }),
   }),
   tradeSpendPct: z.number().min(0).max(100),
+  accrualPct: z.object({
+    distributor: z.number().min(0),
+    operator: z.number().min(0),
+    baseMarketing: z.number().min(0),
+    additionalMarketing: z.number().min(0),
+    deviatedBillback: z.number().min(0),
+  }),
 })
 
 export const CalculationInputSchema = z.object({

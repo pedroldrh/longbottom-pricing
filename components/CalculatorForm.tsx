@@ -10,7 +10,7 @@ import ProgressIndicator from "./wizard/ProgressIndicator"
 import Step1CompanyInfo from "./wizard/Step1CompanyInfo"
 import Step2ShippingTiers from "./wizard/Step2ShippingTiers"
 import Step3FreightRates from "./wizard/Step3FreightRates"
-import Step4TradeSpend from "./wizard/Step4TradeSpend"
+import Step4TradeSpend, { type TradeSpendData } from "./wizard/Step4TradeSpend"
 import Step5PlantsWarehouses from "./wizard/Step5PlantsWarehouses"
 import Step5SKUSetup from "./wizard/Step5SKUSetup"
 import Step7TermsConditions from "./wizard/Step7TermsConditions"
@@ -128,19 +128,34 @@ export default function CalculatorForm() {
     }
   })
 
-  const [tradeSpendData, setTradeSpendData] = useState(() => {
+  const [tradeSpendData, setTradeSpendData] = useState<TradeSpendData>(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(STORAGE_KEYS.TRADE_SPEND_DATA)
       if (saved) {
         try {
-          return JSON.parse(saved)
+          const parsed = JSON.parse(saved)
+          // Migrate from old single-value format
+          if ("tradeSpendPct" in parsed && !("distributorTradeAccrual" in parsed)) {
+            return {
+              distributorTradeAccrual: 10,
+              operatorTradeAccrual: 6,
+              distributorMarketingAccrual: 4,
+              operatorMarketingAccrual: 2,
+              deviatedBillback: 0,
+            }
+          }
+          return parsed
         } catch (e) {
           console.error("Failed to parse trade spend data from localStorage", e)
         }
       }
     }
     return {
-      tradeSpendPct: 25,
+      distributorTradeAccrual: 10,
+      operatorTradeAccrual: 6,
+      distributorMarketingAccrual: 4,
+      operatorMarketingAccrual: 2,
+      deviatedBillback: 0,
     }
   })
 
@@ -201,11 +216,25 @@ export default function CalculatorForm() {
     setIsCalculating(true)
 
     try {
+      const tradeSpendPct =
+        tradeSpendData.distributorTradeAccrual +
+        tradeSpendData.operatorTradeAccrual +
+        tradeSpendData.distributorMarketingAccrual +
+        tradeSpendData.operatorMarketingAccrual +
+        tradeSpendData.deviatedBillback
+
       const settings: Settings = {
         tierLabels: shippingData.tierLabels,
         volumeFeePct: shippingData.volumeFeePerCase,
         freightPerLb: freightData.freightPerLb,
-        tradeSpendPct: tradeSpendData.tradeSpendPct,
+        tradeSpendPct,
+        accrualPct: {
+          distributor: tradeSpendData.distributorTradeAccrual / 100,
+          operator: tradeSpendData.operatorTradeAccrual / 100,
+          baseMarketing: tradeSpendData.distributorMarketingAccrual / 100,
+          additionalMarketing: tradeSpendData.operatorMarketingAccrual / 100,
+          deviatedBillback: tradeSpendData.deviatedBillback / 100,
+        },
       }
 
       const calculationResults = await Promise.all(
@@ -266,7 +295,11 @@ export default function CalculatorForm() {
         },
       })
       setTradeSpendData({
-        tradeSpendPct: 25,
+        distributorTradeAccrual: 10,
+        operatorTradeAccrual: 6,
+        distributorMarketingAccrual: 4,
+        operatorMarketingAccrual: 2,
+        deviatedBillback: 0,
       })
       setSkus([])
       setResults([])
@@ -287,7 +320,12 @@ export default function CalculatorForm() {
     sku.cogsPerLb > 0
 
   const isProductSetupComplete = skus.length > 0 && skus.every(isSkuComplete)
-  const isTradeSpendComplete = tradeSpendData.tradeSpendPct > 0
+  const isTradeSpendComplete =
+    tradeSpendData.distributorTradeAccrual +
+    tradeSpendData.operatorTradeAccrual +
+    tradeSpendData.distributorMarketingAccrual +
+    tradeSpendData.operatorMarketingAccrual +
+    tradeSpendData.deviatedBillback > 0
   const isShippingTiersComplete =
     shippingData.volumeFeePerCase.length === 5 &&
     shippingData.volumeFeePerCase.every((fee) => Number.isFinite(fee) && fee >= 0)
