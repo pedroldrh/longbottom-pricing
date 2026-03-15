@@ -175,6 +175,21 @@ input:focus, select:focus, textarea:focus {
   border-color: var(--lux-accent) !important;
   box-shadow: 0 0 0 3px rgba(111, 183, 242, 0.2) !important;
   outline: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: none !important;
+}
+
+/* Override Tailwind blue focus colors */
+.focus\:border-blue-500:focus {
+  border-color: var(--lux-accent) !important;
+}
+.focus\:ring-blue-500:focus {
+  --tw-ring-color: rgba(111, 183, 242, 0.2) !important;
+}
+
+/* Override Tailwind gray borders to use brand */
+.border-gray-300 {
+  border-color: var(--lux-border) !important;
 }
 
 /* Select dropdown styling */
