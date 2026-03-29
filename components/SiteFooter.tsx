@@ -4,7 +4,7 @@ export default function SiteFooter() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="border-t border-gray-200 bg-white">
+    <footer className="border-t border-gray-200 bg-white print:hidden">
       <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-gray-600 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center gap-3 text-center">
           <p className="font-medium text-gray-800">Elohi Pricing Calculator</p>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useCallback } from "react"
 import type { SKUInput } from "@/lib/types"
 import { Trash2, Check } from 'lucide-react'
 import CustomSelect from "@/components/CustomSelect"
@@ -17,7 +17,7 @@ const emptySKU: SKUInput = {
   temperatureClass: "shelf",
   shelfLife: "",
   lbsPerUnit: 0,
-  unitsPerCase: 1,
+  unitsPerCase: 0,
   caseSize: "",
   palletSize: "",
   caseCube: 0,
@@ -28,18 +28,46 @@ const emptySKU: SKUInput = {
 }
 
 export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
-  const [savedIndex, setSavedIndex] = useState<number | null>(null)
+  // Track which SKUs have been saved (persistent until edited)
+  const [savedSet, setSavedSet] = useState<Set<number>>(new Set())
+  // Snapshot of each SKU at the time it was saved, to detect edits
+  const savedSnapshots = useRef<Map<number, string>>(new Map())
+
+  const readOnlyValueClassName =
+    "mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
+
+  // Format numeric fields on blur to proper precision
+  const formatOnBlur = (index: number, field: keyof SKUInput, decimals: number) => (e: React.FocusEvent<HTMLInputElement>) => {
+    const raw = e.target.value
+    if (raw === "") return
+    const num = decimals === 0 ? Math.round(Number(raw)) : Math.round(Number(raw) * 10 ** decimals) / 10 ** decimals
+    if (num < 0) {
+      updateSKU(index, { ...skus[index], [field]: 0 })
+      return
+    }
+    if (num !== skus[index][field]) {
+      updateSKU(index, { ...skus[index], [field]: num })
+    }
+  }
 
   const handleSave = (index: number) => {
     // Data is already persisted via localStorage in CalculatorForm,
     // this triggers a visual confirmation for the user
     onChange([...skus])
-    setSavedIndex(index)
-    setTimeout(() => setSavedIndex(null), 2000)
+    setSavedSet((prev) => new Set(prev).add(index))
+    savedSnapshots.current.set(index, JSON.stringify(skus[index]))
   }
 
+  // Check if a SKU has been edited since last save
+  const isSaved = useCallback((index: number) => {
+    if (!savedSet.has(index)) return false
+    const snapshot = savedSnapshots.current.get(index)
+    return snapshot === JSON.stringify(skus[index])
+  }, [savedSet, skus])
+
   const addSKU = () => {
-    onChange([{ ...emptySKU }, ...skus])
+    // Append to bottom for consistency with facility add
+    onChange([...skus, { ...emptySKU }])
   }
 
   const updateSKU = (index: number, updatedSKU: SKUInput) => {
@@ -49,7 +77,18 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
   }
 
   const removeSKU = (index: number) => {
+    if (skus.length <= 1) return // Always keep at least 1 SKU
     onChange(skus.filter((_, i) => i !== index))
+    // Clean up saved state for removed index
+    setSavedSet((prev) => {
+      const next = new Set<number>()
+      prev.forEach((i) => {
+        if (i < index) next.add(i)
+        else if (i > index) next.add(i - 1)
+      })
+      return next
+    })
+    savedSnapshots.current.delete(index)
   }
 
   const cloneSKU = (index: number) => {
@@ -88,6 +127,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
 
       {skus.map((sku, index) => {
         const caseNetWeight = sku.lbsPerUnit * sku.unitsPerCase
+        const hasCaseNetWeight = sku.lbsPerUnit > 0 && sku.unitsPerCase > 0
 
         return (
           <div key={index} className="bg-white rounded-lg shadow p-6 space-y-4">
@@ -99,12 +139,12 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                 <button
                   onClick={() => handleSave(index)}
                   className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    savedIndex === index
+                    isSaved(index)
                       ? "bg-green-600 text-white"
                       : "bg-green-50 text-green-700 hover:bg-green-100"
                   }`}
                 >
-                  {savedIndex === index ? (
+                  {isSaved(index) ? (
                     <span className="flex items-center gap-1"><Check className="w-4 h-4" /> Saved</span>
                   ) : (
                     "Save"
@@ -118,8 +158,13 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                 </button>
                 <button
                   onClick={() => removeSKU(index)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-md"
-                  title="Remove SKU"
+                  disabled={skus.length <= 1}
+                  className={`p-2 rounded-md ${
+                    skus.length <= 1
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-red-600 hover:bg-red-50"
+                  }`}
+                  title={skus.length <= 1 ? "At least one SKU is required" : "Remove SKU"}
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
@@ -160,6 +205,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   min="0"
                   value={sku.lbsPerUnit || ""}
                   onChange={(e) => updateSKU(index, { ...sku, lbsPerUnit: Number.parseFloat(e.target.value) || 0 })}
+                  onBlur={formatOnBlur(index, "lbsPerUnit", 2)}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                   placeholder="2.50"
                 />
@@ -171,7 +217,8 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   step="1"
                   min="1"
                   value={sku.unitsPerCase || ""}
-                  onChange={(e) => updateSKU(index, { ...sku, unitsPerCase: Number.parseInt(e.target.value) || 1 })}
+                  onChange={(e) => updateSKU(index, { ...sku, unitsPerCase: Number.parseInt(e.target.value) || 0 })}
+                  onBlur={formatOnBlur(index, "unitsPerCase", 0)}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                   placeholder="4"
                 />
@@ -208,18 +255,29 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   min="0"
                   value={sku.caseCube || ""}
                   onChange={(e) => updateSKU(index, { ...sku, caseCube: Number.parseFloat(e.target.value) || 0 })}
+                  onBlur={formatOnBlur(index, "caseCube", 2)}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                   placeholder="0.39"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Case Net Weight (lbs.)</label>
-                <input
-                  type="text"
-                  value={caseNetWeight.toFixed(2)}
-                  readOnly
-                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
-                />
+                <div className="relative">
+                  {!hasCaseNetWeight && (
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 flex items-center px-3 py-2 text-sm text-gray-400"
+                    >
+                      10.00
+                    </div>
+                  )}
+                  <input
+                    type="text"
+                    value={hasCaseNetWeight ? caseNetWeight.toFixed(2) : ""}
+                    readOnly
+                    className={readOnlyValueClassName}
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Case Gross Weight (lbs.)</label>
@@ -229,6 +287,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   min="0"
                   value={sku.caseGrossWeight || ""}
                   onChange={(e) => updateSKU(index, { ...sku, caseGrossWeight: Number.parseFloat(e.target.value) || 0 })}
+                  onBlur={formatOnBlur(index, "caseGrossWeight", 2)}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                   placeholder="10.95"
                 />
@@ -241,6 +300,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   min="0"
                   value={sku.casesPerPallet || ""}
                   onChange={(e) => updateSKU(index, { ...sku, casesPerPallet: Number.parseInt(e.target.value) || 0 })}
+                  onBlur={formatOnBlur(index, "casesPerPallet", 0)}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                   placeholder="100"
                 />
@@ -257,6 +317,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   min="0"
                   value={sku.palletTI || ""}
                   onChange={(e) => updateSKU(index, { ...sku, palletTI: Number.parseInt(e.target.value) || 0 })}
+                  onBlur={formatOnBlur(index, "palletTI", 0)}
                   className="mt-1 block w-full sm:text-sm px-3 py-2 border"
                   placeholder="10"
                 />
@@ -269,6 +330,7 @@ export default function Step5SKUSetup({ skus, onChange }: Step5Props) {
                   min="0"
                   value={sku.palletHI || ""}
                   onChange={(e) => updateSKU(index, { ...sku, palletHI: Number.parseInt(e.target.value) || 0 })}
+                  onBlur={formatOnBlur(index, "palletHI", 0)}
                   className="mt-1 block w-full sm:text-sm px-3 py-2 border"
                   placeholder="10"
                 />

@@ -119,24 +119,47 @@ export default function CalculatorForm() {
           // Migrate from old single-value format
           if ("tradeSpendPct" in parsed && !("distributorTradeAccrual" in parsed)) {
             return {
-              distributorTradeAccrual: 10,
-              operatorTradeAccrual: 6,
-              distributorMarketingAccrual: 4,
-              operatorMarketingAccrual: 2,
+              distributorTradeAccrual: 0,
+              operatorTradeAccrual: 0,
+              distributorMarketingAccrual: 0,
+              operatorMarketingAccrual: 0,
               deviatedBillback: 0,
             }
           }
-          return parsed
+          const normalized = {
+            distributorTradeAccrual: parsed.distributorTradeAccrual ?? 0,
+            operatorTradeAccrual: parsed.operatorTradeAccrual ?? 0,
+            distributorMarketingAccrual: parsed.distributorMarketingAccrual ?? 0,
+            operatorMarketingAccrual: parsed.operatorMarketingAccrual ?? 0,
+            deviatedBillback: parsed.deviatedBillback ?? 0,
+          }
+
+          const matchesLegacyDefaults =
+            normalized.distributorTradeAccrual === 10 &&
+            normalized.operatorTradeAccrual === 6 &&
+            normalized.distributorMarketingAccrual === 4 &&
+            normalized.operatorMarketingAccrual === 2 &&
+            normalized.deviatedBillback === 0
+
+          return matchesLegacyDefaults
+            ? {
+                distributorTradeAccrual: 0,
+                operatorTradeAccrual: 0,
+                distributorMarketingAccrual: 0,
+                operatorMarketingAccrual: 0,
+                deviatedBillback: 0,
+              }
+            : normalized
         } catch (e) {
           console.error("Failed to parse trade spend data from localStorage", e)
         }
       }
     }
     return {
-      distributorTradeAccrual: 10,
-      operatorTradeAccrual: 6,
-      distributorMarketingAccrual: 4,
-      operatorMarketingAccrual: 2,
+      distributorTradeAccrual: 0,
+      operatorTradeAccrual: 0,
+      distributorMarketingAccrual: 0,
+      operatorMarketingAccrual: 0,
       deviatedBillback: 0,
     }
   })
@@ -148,21 +171,51 @@ export default function CalculatorForm() {
         try {
           const parsed = JSON.parse(saved)
           return Array.isArray(parsed)
-            ? parsed.map((sku: any) => ({
-                productName: sku.productName ?? "",
-                caseUPC: sku.caseUPC ?? "",
-                temperatureClass: sku.temperatureClass ?? "shelf",
-                shelfLife: sku.shelfLife ?? "",
-                lbsPerUnit: sku.lbsPerUnit ?? 0,
-                unitsPerCase: sku.unitsPerCase ?? 1,
-                caseSize: sku.caseSize ?? "",
-                palletSize: sku.palletSize ?? "",
-                caseCube: sku.caseCube ?? 0,
-                caseGrossWeight: sku.caseGrossWeight ?? 0,
-                casesPerPallet: sku.casesPerPallet ?? 0,
-                palletTI: sku.palletTI ?? 0,
-                palletHI: sku.palletHI ?? 0,
-              }))
+            ? parsed.map((sku: any) => {
+                const productName = sku.productName ?? ""
+                const caseUPC = sku.caseUPC ?? ""
+                const temperatureClass = sku.temperatureClass ?? "shelf"
+                const shelfLife = sku.shelfLife ?? ""
+                const lbsPerUnit = sku.lbsPerUnit ?? 0
+                const unitsPerCase = sku.unitsPerCase ?? 0
+                const caseSize = sku.caseSize ?? ""
+                const palletSize = sku.palletSize ?? ""
+                const caseCube = sku.caseCube ?? 0
+                const caseGrossWeight = sku.caseGrossWeight ?? 0
+                const casesPerPallet = sku.casesPerPallet ?? 0
+                const palletTI = sku.palletTI ?? 0
+                const palletHI = sku.palletHI ?? 0
+
+                const hasAnySkuData = Boolean(
+                  productName ||
+                    caseUPC ||
+                    shelfLife ||
+                    lbsPerUnit ||
+                    caseSize ||
+                    palletSize ||
+                    caseCube ||
+                    caseGrossWeight ||
+                    casesPerPallet ||
+                    palletTI ||
+                    palletHI
+                )
+
+                return {
+                  productName,
+                  caseUPC,
+                  temperatureClass,
+                  shelfLife,
+                  lbsPerUnit,
+                  unitsPerCase: hasAnySkuData ? unitsPerCase : 0,
+                  caseSize,
+                  palletSize,
+                  caseCube,
+                  caseGrossWeight,
+                  casesPerPallet,
+                  palletTI,
+                  palletHI,
+                }
+              })
             : []
         } catch (e) {
           console.error("Failed to parse SKUs from localStorage", e)
@@ -308,10 +361,10 @@ export default function CalculatorForm() {
         hasFreightStudy: "",
       })
       setTradeSpendData({
-        distributorTradeAccrual: 10,
-        operatorTradeAccrual: 6,
-        distributorMarketingAccrual: 4,
-        operatorMarketingAccrual: 2,
+        distributorTradeAccrual: 0,
+        operatorTradeAccrual: 0,
+        distributorMarketingAccrual: 0,
+        operatorMarketingAccrual: 0,
         deviatedBillback: 0,
       })
       setSkus([])
@@ -491,7 +544,7 @@ export default function CalculatorForm() {
         headerEl
       )}
 
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-6 print:hidden">
         <ProgressIndicator
           currentStep={currentStep}
           completedSteps={completedSteps}
@@ -535,7 +588,7 @@ export default function CalculatorForm() {
       )}
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between items-center bg-white rounded-lg shadow p-6">
+      <div className="flex justify-between items-center bg-white rounded-lg shadow p-6 print:hidden">
         <button
           onClick={prevStep}
           disabled={currentStep === 1}

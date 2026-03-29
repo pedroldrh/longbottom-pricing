@@ -97,6 +97,20 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
     onChange(updated)
   }
 
+  // Format currency fields on blur to 2 decimal places, clamp negatives to 0
+  const formatCurrencyOnBlur = (skuIndex: number, field: keyof SKUPnLInputs, tierIndex?: number) => (e: React.FocusEvent<HTMLInputElement>) => {
+    const raw = e.target.value
+    if (raw === "") return
+    let num = Math.round(Number(raw) * 100) / 100
+    if (num < 0) num = 0
+    const inputs = pnlInputs[skuIndex]
+    if (field === "basePricePerCase" || field === "cogsPerCase") {
+      if (num !== inputs[field]) updateSKU(skuIndex, field, num)
+    } else {
+      if (num !== (inputs[field] as number[])[tierIndex!]) updateSKU(skuIndex, field, num, tierIndex)
+    }
+  }
+
   const volFeePcts = shippingData.volumeFeePerCase
 
   const selectedCount = selectedSkus.size
@@ -244,6 +258,7 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
                       min="0"
                       value={inputs.basePricePerCase || ""}
                       onChange={(e) => updateSKU(skuIdx, "basePricePerCase", parseFloat(e.target.value) || 0)}
+                      onBlur={formatCurrencyOnBlur(skuIdx, "basePricePerCase")}
                       className="mt-1 block w-full rounded-md border-gray-300 bg-yellow-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                       placeholder="0.00"
                     />
@@ -256,6 +271,7 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
                       min="0"
                       value={inputs.cogsPerCase || ""}
                       onChange={(e) => updateSKU(skuIdx, "cogsPerCase", parseFloat(e.target.value) || 0)}
+                      onBlur={formatCurrencyOnBlur(skuIdx, "cogsPerCase")}
                       className="mt-1 block w-full rounded-md border-gray-300 bg-yellow-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                       placeholder="0.00"
                     />
@@ -338,6 +354,7 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
                             min="0"
                             value={inputs.freightPerTier[t] || ""}
                             onChange={(e) => updateSKU(skuIdx, "freightPerTier", parseFloat(e.target.value) || 0, t)}
+                            onBlur={formatCurrencyOnBlur(skuIdx, "freightPerTier", t)}
                             className="w-full rounded border border-gray-300 bg-yellow-100 text-right px-2 py-1 text-sm focus:border-blue-500 focus:ring-blue-500"
                             placeholder="0.00"
                           />
@@ -356,6 +373,7 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
                             min="0"
                             value={inputs.lumpersPerTier[t] || ""}
                             onChange={(e) => updateSKU(skuIdx, "lumpersPerTier", parseFloat(e.target.value) || 0, t)}
+                            onBlur={formatCurrencyOnBlur(skuIdx, "lumpersPerTier", t)}
                             className="w-full rounded border border-gray-300 bg-yellow-100 text-right px-2 py-1 text-sm focus:border-blue-500 focus:ring-blue-500"
                             placeholder="0.00"
                           />
@@ -374,6 +392,7 @@ export default function Step6SKUPnL({ skus, shippingData, tradeSpendData, pnlInp
                             min="0"
                             value={inputs.damagesPerTier[t] || ""}
                             onChange={(e) => updateSKU(skuIdx, "damagesPerTier", parseFloat(e.target.value) || 0, t)}
+                            onBlur={formatCurrencyOnBlur(skuIdx, "damagesPerTier", t)}
                             className="w-full rounded border border-gray-300 bg-yellow-100 text-right px-2 py-1 text-sm focus:border-blue-500 focus:ring-blue-500"
                             placeholder="0.00"
                           />

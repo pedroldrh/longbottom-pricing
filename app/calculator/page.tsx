@@ -3,7 +3,7 @@ import CalculatorForm from "@/components/CalculatorForm"
 export default function CalculatorPage() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-cream)' }}>
-      <header id="calc-header" style={{
+      <header id="calc-header" className="print:hidden" style={{
         background: 'var(--bg-card)',
         borderBottom: '1px solid var(--lux-border)',
         boxShadow: '0 1px 8px rgba(57, 48, 137, 0.04)',

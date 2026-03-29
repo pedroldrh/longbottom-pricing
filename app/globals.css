@@ -384,6 +384,18 @@ th {
     display: none !important;
   }
 
+  /* Remove page wrapper styling so only invoice content shows */
+  .min-h-screen {
+    background: white !important;
+    min-height: auto !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+
   .bg-white {
     border: none;
   }

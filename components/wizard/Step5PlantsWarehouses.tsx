@@ -39,6 +39,7 @@ export default function Step5PlantsWarehouses({ data, onChange }: Step5Props) {
   }
 
   const removePlantWarehouse = (id: string) => {
+    if (data.plantsWarehouses.length <= 1) return
     onChange({
       ...data,
       plantsWarehouses: data.plantsWarehouses.filter((plant) => plant.id !== id),
@@ -81,8 +82,12 @@ export default function Step5PlantsWarehouses({ data, onChange }: Step5Props) {
                   <button
                     type="button"
                     onClick={() => removePlantWarehouse(plant.id)}
-                    className="text-red-600 hover:text-red-700"
-                    aria-label="Remove facility"
+                    disabled={data.plantsWarehouses.length <= 1}
+                    className={data.plantsWarehouses.length <= 1
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-red-600 hover:text-red-700"
+                    }
+                    aria-label={data.plantsWarehouses.length <= 1 ? "At least one facility is required" : "Remove facility"}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

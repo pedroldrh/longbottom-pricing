@@ -16,12 +16,20 @@ interface Step4Props {
 }
 
 const ROWS = [
-  { key: "distributorTradeAccrual" as const, label: "Distributor Trade Accrual", range: "7% – 12%**", tip: "Percentage of net sell price paid to distributors for promotional activities, slotting fees, and sales incentives." },
-  { key: "operatorTradeAccrual" as const, label: "Operator Trade Accrual", range: "5% – 8%", tip: "Percentage paid to foodservice operators (restaurants, cafeterias, hotels) as purchasing incentives or rebates." },
-  { key: "distributorMarketingAccrual" as const, label: "Distributor Marketing Accrual", range: "4% – 8%", tip: "Percentage allocated for distributor-facing marketing programs such as catalogs, trade shows, and co-op advertising." },
-  { key: "operatorMarketingAccrual" as const, label: "Operator Marketing Accrual", range: "2% – 4%", tip: "Percentage allocated for operator-facing marketing like menu placement, sampling programs, and promotional materials." },
+  { key: "distributorTradeAccrual" as const, label: "Distributor Trade Accrual", range: "7% - 12%**", tip: "Percentage of net sell price paid to distributors for promotional activities, slotting fees, and sales incentives." },
+  { key: "operatorTradeAccrual" as const, label: "Operator Trade Accrual", range: "5% - 8%", tip: "Percentage paid to foodservice operators (restaurants, cafeterias, hotels) as purchasing incentives or rebates." },
+  { key: "distributorMarketingAccrual" as const, label: "Distributor Marketing Accrual", range: "4% - 8%", tip: "Percentage allocated for distributor-facing marketing programs such as catalogs, trade shows, and co-op advertising." },
+  { key: "operatorMarketingAccrual" as const, label: "Operator Marketing Accrual", range: "2% - 4%", tip: "Percentage allocated for operator-facing marketing like menu placement, sampling programs, and promotional materials." },
   { key: "deviatedBillback" as const, label: "Deviated Billback", range: "As Negotiated", tip: "A pricing arrangement where the manufacturer agrees to a lower 'deviated' price for a specific operator through a distributor, then reimburses the distributor for the price difference." },
 ]
+
+const BACKGROUND_HINTS: Record<(typeof ROWS)[number]["key"], string> = {
+  distributorTradeAccrual: "10.0",
+  operatorTradeAccrual: "6.0",
+  distributorMarketingAccrual: "4.0",
+  operatorMarketingAccrual: "2.0",
+  deviatedBillback: "0.0",
+}
 
 export default function Step4TradeSpend({ data, onChange }: Step4Props) {
   const sum =
@@ -47,7 +55,7 @@ export default function Step4TradeSpend({ data, onChange }: Step4Props) {
         <div className="flex items-center gap-2">
           <input
             type="text"
-            value={sum.toFixed(1)}
+            value={sum === 0 ? "" : sum.toFixed(1)}
             readOnly
             className="block w-32 rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm px-3 py-2 border text-gray-600"
           />
@@ -75,17 +83,27 @@ export default function Step4TradeSpend({ data, onChange }: Step4Props) {
                 </td>
                 <td className="py-3 px-4">
                   <div className="flex items-center justify-end">
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="100"
-                      value={data[row.key]}
-                      onChange={(e) =>
-                        onChange({ ...data, [row.key]: Number.parseFloat(e.target.value) || 0 })
-                      }
-                      className="w-24 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border text-right bg-yellow-100"
-                    />
+                    <div className="relative">
+                      {data[row.key] === 0 && (
+                        <div
+                          aria-hidden="true"
+                          className="pointer-events-none absolute inset-0 flex items-center justify-end px-3 py-2 text-sm text-gray-400"
+                        >
+                          {BACKGROUND_HINTS[row.key]}
+                        </div>
+                      )}
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="100"
+                        value={data[row.key] === 0 ? "" : data[row.key]}
+                        onChange={(e) =>
+                          onChange({ ...data, [row.key]: Number.parseFloat(e.target.value) || 0 })
+                        }
+                        className="w-24 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border text-right bg-yellow-100"
+                      />
+                    </div>
                     <span className="ml-1 text-sm text-gray-500">%</span>
                   </div>
                 </td>
@@ -97,11 +115,11 @@ export default function Step4TradeSpend({ data, onChange }: Step4Props) {
           </tbody>
           <tfoot>
             <tr className="border-t-2 border-gray-900">
-              <td className="py-3 pr-4 text-sm font-bold text-gray-900 text-right">18% – 25%</td>
+              <td className="py-3 pr-4 text-sm font-bold text-gray-900 text-right">18% - 25%</td>
               <td className="py-3 px-4">
                 <div className="flex items-center justify-end">
                   <span className="w-24 text-right text-sm font-bold text-gray-900 px-3 py-2">
-                    {sum.toFixed(1)}
+                    {sum === 0 ? "" : sum.toFixed(1)}
                   </span>
                   <span className="ml-1 text-sm text-gray-500">%</span>
                 </div>
